@@ -1,3 +1,8 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 
@@ -7,7 +12,7 @@
 #include "aliastablemodel.h"
 #include "optionsmodel.h"
 #include "walletmodel.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "editaliasdialog.h"
 #include "newmessagedialog.h"
 #include "signrawtxdialog.h"
@@ -53,7 +58,7 @@ AliasListPage::AliasListPage(const PlatformStyle *platformStyle, QWidget *parent
 		ui->signMultisigButton->setIcon(platformStyle->SingleColorIcon(":/icons/" + theme + "/key"));
 	}
 
-    ui->labelExplanation->setText(tr("Search for Syscoin Aliases. Select Safe Search from wallet options if you wish to omit potentially offensive Aliases(On by default)"));
+    ui->labelExplanation->setText(tr("Search for Dynamic Aliases. Select Safe Search from wallet options if you wish to omit potentially offensive Aliases(On by default)"));
 	
     // Context menu actions
     QAction *copyAliasAction = new QAction(ui->copyAlias->text(), this);
@@ -83,7 +88,7 @@ void AliasListPage::showEvent ( QShowEvent * event )
     if(!walletModel) return;
     /*if(walletModel->getEncryptionStatus() == WalletModel::Locked)
 	{
-        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to search Syscoin Aliases.</font> <a href=\"http://lockedwallet.syscoin.org\">more info</a>"));
+        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to search Dynamic Aliases.</font>"));
 		ui->labelExplanation->setTextFormat(Qt::RichText);
 		ui->labelExplanation->setTextInteractionFlags(Qt::TextBrowserInteraction);
 		ui->labelExplanation->setOpenExternalLinks(true);

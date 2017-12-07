@@ -1,10 +1,15 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "editcertdialog.h"
 #include "ui_editcertdialog.h"
 
 #include "certtablemodel.h"
 #include "guiutil.h"
 #include "walletmodel.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "ui_interface.h"
 #include <QDataWidgetMapper>
 #include <QMessageBox>
@@ -558,7 +563,7 @@ void EditCertDialog::accept()
             break;
         case CertTableModel::INVALID_CERT:
             QMessageBox::warning(this, windowTitle(),
-                tr("The entered cert is not a valid Syscoin cert."),
+                tr("The entered cert is not a valid Dynamic cert."),
                 QMessageBox::Ok, QMessageBox::Ok);
             break;
         case CertTableModel::WALLET_UNLOCK_FAILURE:

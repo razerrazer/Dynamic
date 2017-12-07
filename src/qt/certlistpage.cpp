@@ -1,10 +1,15 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "certlistpage.h"
 #include "ui_certlistpage.h"
 #include "platformstyle.h"
 #include "certtablemodel.h"
 #include "optionsmodel.h"
 #include "walletmodel.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "editcertdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
@@ -41,7 +46,7 @@ CertListPage::CertListPage(const PlatformStyle *platformStyle, QWidget *parent) 
 		ui->copyCert->setIcon(platformStyle->SingleColorIcon(":/icons/" + theme + "/editcopy"));
 		ui->searchCert->setIcon(platformStyle->SingleColorIcon(":/icons/" + theme + "/search"));
 	}
-    ui->labelExplanation->setText(tr("Search for Syscoin Certificates. Select Safe Search from wallet options if you wish to omit potentially offensive Certificates(On by default)"));
+    ui->labelExplanation->setText(tr("Search for Dynamic Certificates. Select Safe Search from wallet options if you wish to omit potentially offensive Certificates(On by default)"));
 	
     // Context menu actions
     QAction *copyCertAction = new QAction(ui->copyCert->text(), this);

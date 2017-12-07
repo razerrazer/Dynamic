@@ -1,6 +1,8 @@
-/*
- * Syscoin Developers 2015
- */
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "mycertlistpage.h"
 #include "ui_mycertlistpage.h"
 #include "certtablemodel.h"
@@ -8,7 +10,7 @@
 #include "optionsmodel.h"
 #include "walletmodel.h"
 #include "platformstyle.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "editcertdialog.h"
 #include "editofferdialog.h"
 #include "csvmodelwriter.h"
@@ -50,7 +52,7 @@ MyCertListPage::MyCertListPage(const PlatformStyle *platformStyle, QWidget *pare
 		
 	}
 
-    ui->labelExplanation->setText(tr("These are your registered Syscoin Certificates. Certificate operations (create, update, transfer) take 2-5 minutes to become active.  You can choose which aliases to view related certificates using the dropdown to the right."));
+    ui->labelExplanation->setText(tr("These are your registered Dynamic Certificates. Certificate operations (create, update, transfer) take 2-5 minutes to become active.  You can choose which aliases to view related certificates using the dropdown to the right."));
 	
 	
     // Context menu actions
@@ -142,7 +144,7 @@ void MyCertListPage::showEvent ( QShowEvent * event )
     if(!walletModel) return;
     /*if(walletModel->getEncryptionStatus() == WalletModel::Locked)
 	{
-        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to interact with Syscoin Certs. Because your wallet is locked you must manually refresh this table after creating or updating an Cert. </font> <a href=\"http://lockedwallet.syscoin.org\">more info</a><br><br>These are your registered Syscoin Certs. Cert updates take 1 confirmation to appear in this table."));
+        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to interact with Dynamic Certs. Because your wallet is locked you must manually refresh this table after creating or updating an Cert. </font> <br><br>These are your registered Dynamic Certs. Cert updates take 1 confirmation to appear in this table."));
 		ui->labelExplanation->setTextFormat(Qt::RichText);
 		ui->labelExplanation->setTextInteractionFlags(Qt::TextBrowserInteraction);
 		ui->labelExplanation->setOpenExternalLinks(true);

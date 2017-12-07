@@ -1,6 +1,8 @@
-/*
- * Syscoin Developers 2014
- */
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "myaliaslistpage.h"
 #include "ui_myaliaslistpage.h"
 #include "aliastablemodel.h"
@@ -8,7 +10,7 @@
 #include "optionsmodel.h"
 #include "platformstyle.h"
 #include "walletmodel.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "editaliasdialog.h"
 #include "signrawtxdialog.h"
 #include "mywhitelistofferdialog.h"
@@ -57,7 +59,7 @@ MyAliasListPage::MyAliasListPage(const PlatformStyle *platformStyle, QWidget *pa
 		
 	}
 
-    ui->labelExplanation->setText(tr("These are your registered Syscoin Aliases. Alias operations (create, update, transfer) take 2-5 minutes to become active."));
+    ui->labelExplanation->setText(tr("These are your registered Dynamic Aliases. Alias operations (create, update, transfer) take 2-5 minutes to become active."));
 	
 	
     // Context menu actions
@@ -96,7 +98,7 @@ void MyAliasListPage::showEvent ( QShowEvent * event )
     if(!walletModel) return;
     /*if(walletModel->getEncryptionStatus() == WalletModel::Locked)
 	{
-        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to interact with Syscoin Aliases. Because your wallet is locked you must manually refresh this table after creating or updating an Alias. </font> <a href=\"http://lockedwallet.syscoin.org\">more info</a><br><br>These are your registered Syscoin Aliases. Alias updates take 1 confirmation to appear in this table."));
+        ui->labelExplanation->setText(tr("<font color='blue'>WARNING: Your wallet is currently locked. For security purposes you'll need to enter your passphrase in order to interact with Dynamic Aliases. Because your wallet is locked you must manually refresh this table after creating or updating an Alias. </font> <br><br>These are your registered Dynamic Aliases. Alias updates take 1 confirmation to appear in this table."));
 		ui->labelExplanation->setTextFormat(Qt::RichText);
 		ui->labelExplanation->setTextInteractionFlags(Qt::TextBrowserInteraction);
 		ui->labelExplanation->setOpenExternalLinks(true);

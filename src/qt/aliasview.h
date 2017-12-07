@@ -1,12 +1,14 @@
-/*
- * Syscoin Developers 2016
- */
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef ALIASVIEW_H
 #define ALIASVIEW_H
 
 #include <QStackedWidget>
 
-class SyscoinGUI;
+class DynamicGUI;
 class ClientModel;
 class WalletModel;
 class MyAliasListPage;
@@ -24,7 +26,7 @@ class QAction;
 QT_END_NAMESPACE
 
 /*
-  AliasView class. This class represents the view to the syscoin aliases
+  AliasView class. This class represents the view to the Dynamic aliases
   
 */
 class AliasView: public QObject
@@ -35,13 +37,13 @@ public:
     explicit AliasView(const PlatformStyle *platformStyle, QStackedWidget *parent);
     ~AliasView();
 
-    void setSyscoinGUI(SyscoinGUI *gui);
+    void setDynamicGUI(DynamicGUI *gui);
     /** Set the client model.
         The client model represents the part of the core that communicates with the P2P network, and is wallet-agnostic.
     */
     void setClientModel(ClientModel *clientModel);
     /** Set the wallet model.
-        The wallet model represents a syscoin wallet, and offers access to the list of transactions, address book and sending
+        The wallet model represents a Dynamic wallet, and offers access to the list of transactions, address book and sending
         functionality.
     */
     void setWalletModel(WalletModel *walletModel);
@@ -49,7 +51,7 @@ public:
 
 
 private:
-    SyscoinGUI *gui;
+    DynamicGUI *gui;
     ClientModel *clientModel;
     WalletModel *walletModel;
 

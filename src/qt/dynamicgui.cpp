@@ -356,9 +356,9 @@ void DynamicGUI::createActions()
 #endif
     tabGroup->addAction(dynodeAction);    
 
-	// SYSCOIN
-	identityListAction = new QAction(QIcon(":/icons/" + theme + "/identity"), tr("Identityes"), this);
-    identityListAction->setStatusTip(tr("Manage identityes"));
+	// Dynamic Identities
+	identityListAction = new QAction(QIcon(":/icons/" + theme + "/identity"), tr("Identities"), this);
+    identityListAction->setStatusTip(tr("Manage identities"));
     identityListAction->setToolTip(identityListAction->statusTip());
     identityListAction->setCheckable(true);
     identityListAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
@@ -930,12 +930,12 @@ void DynamicGUI::gotoVerifyMessageTab(QString addr)
     if (walletFrame) walletFrame->gotoVerifyMessageTab(addr);
 }
 
-void SyscoinGUI::gotoIdentityListPage()
+void DynamicGUI::gotoIdentityListPage()
 {
     if (walletFrame) walletFrame->gotoIdentityListPage();
 }
 
-void SyscoinGUI::gotoCertListPage()
+void DynamicGUI::gotoCertListPage()
 {
     if (walletFrame) walletFrame->gotoCertListPage();
 }

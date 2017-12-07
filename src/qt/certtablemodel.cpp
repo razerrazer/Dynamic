@@ -1,3 +1,8 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "certtablemodel.h"
 
 #include "guiutil.h"
@@ -472,7 +477,7 @@ QModelIndex CertTableModel::index(int row, int column, const QModelIndex &parent
 
 void CertTableModel::updateEntry(const QString &cert, const QString &value, const QString &data, const QString &pubdata, const QString &category, const QString &expires_on, const QString &expired, const QString &alias, const QString &safesearch, CertModelType type, int status)
 {
-    // Update cert book model from Syscoin core
+    // Update cert book model from Dynamic core
     priv->updateEntry(cert, value, data, pubdata, category, expires_on, expired, alias, safesearch, type, status);
 }
 

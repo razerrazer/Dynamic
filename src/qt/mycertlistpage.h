@@ -1,3 +1,8 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MYCERTLISTPAGE_H
 #define MYCERTLISTPAGE_H
 
@@ -63,7 +68,7 @@ private Q_SLOTS:
     void on_editButton_clicked();
     /** Export button clicked */
     void on_exportButton_clicked();
-    /** transfer the cert to a syscoin address  */
+    /** transfer the cert to a Dynamic address  */
     void on_transferButton_clicked();
 	void on_refreshButton_clicked();
 

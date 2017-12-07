@@ -1,3 +1,7 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "aliastablemodel.h"
 
@@ -517,7 +521,7 @@ QModelIndex AliasTableModel::index(int row, int column, const QModelIndex &paren
 
 void AliasTableModel::updateEntry(const QString &alias, const QString &multisig, const QString &value, const QString &privvalue, const QString &expires_on, const QString &expired, const QString &safesearch, const QString &buyer_rating, const QString &seller_rating, const QString &arbiter_rating, AliasModelType type, int status)
 {
-    // Update alias book model from Syscoin core
+    // Update alias book model from Dynamic
     priv->updateEntry(alias, multisig, value, privvalue, expires_on, expired, safesearch, buyer_rating, seller_rating, arbiter_rating, type, status);
 }
 

@@ -1,10 +1,15 @@
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "editaliasdialog.h"
 #include "ui_editaliasdialog.h"
 
 #include "aliastablemodel.h"
 #include "guiutil.h"
 #include "walletmodel.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 #include "ui_interface.h"
 #include <QDataWidgetMapper>
 #include <QInputDialog>
@@ -25,7 +30,7 @@ EditAliasDialog::EditAliasDialog(Mode mode, QWidget *parent) :
 	ui->transferLabel->setVisible(false);
 	ui->aliasPegDisclaimer->setText(QString("<font color='blue'>") + tr("Choose an alias which has peg information. Consumers will pay conversion amounts and network fees based on this peg.") + QString("</font>"));
 	ui->expiryDisclaimer->setText(QString("<font color='blue'>") + tr("Choose a standard expiration time(in UTC) for this alias from 1 to 5 years or check the 'Use Custom Expire Time' check box to enter an expiration timestamp. It is exponentially more expensive per year, calculation is FEERATE*(2.88^years). FEERATE is the dynamic satoshi per byte fee set in the rate peg alias used for this alias.") + QString("</font>"));
-	ui->transferDisclaimer->setText(QString("<font color='red'>") + tr("Warning: transferring your alias will transfer ownership all of your syscoin services that use this alias.") + QString("</font>"));
+	ui->transferDisclaimer->setText(QString("<font color='red'>") + tr("Warning: transferring your alias will transfer ownership all of your Dynamic services that use this alias.") + QString("</font>"));
 	ui->transferDisclaimer->setVisible(false);
 	ui->safeSearchDisclaimer->setText(QString("<font color='blue'>") + tr("Is this alias safe to search? Anything that can be considered offensive to someone should be set to 'No' here. If you do create an alias that is offensive and do not set this option to 'No' your alias will be banned!") + QString("</font>"));
 	ui->expiryEdit->clear();
@@ -485,7 +490,7 @@ void EditAliasDialog::accept()
             break;
         case AliasTableModel::INVALID_ALIAS:
             QMessageBox::warning(this, windowTitle(),
-				tr("The entered alias is not a valid Syscoin alias. Alias: ") + ui->aliasEdit->text(),
+				tr("The entered alias is not a valid Dynamic alias. Alias: ") + ui->aliasEdit->text(),
                 QMessageBox::Ok, QMessageBox::Ok);
             break;
         case AliasTableModel::WALLET_UNLOCK_FAILURE:

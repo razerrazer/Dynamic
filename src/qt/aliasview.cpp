@@ -1,8 +1,10 @@
-/*
- * Syscoin Developers 2016
- */
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
+// Copyright (c) 2009-2017 The Syscoin Core developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "aliasview.h"
-#include "syscoingui.h"
+#include "dynamicgui.h"
 
 #include "platformstyle.h"
 #include "guiutil.h"
@@ -42,7 +44,7 @@ AliasView::~AliasView()
 {
 }
 
-void AliasView::setSyscoinGUI(SyscoinGUI *gui)
+void AliasView::setDynamicGUI(DynamicGUI *gui)
 {
     this->gui = gui;
 }

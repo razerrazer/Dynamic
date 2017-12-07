@@ -253,8 +253,7 @@ private Q_SLOTS:
     void gotoIdentityListPage();
     /** Switch to certificate  page */
     void gotoCertListPage();
-    /
-    * ** Show open dialog */
+    /** Show open dialog */
     void openClicked();
 #endif // ENABLE_WALLET
     /** Show configuration dialog */

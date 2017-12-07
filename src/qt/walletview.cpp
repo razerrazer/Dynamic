@@ -149,9 +149,9 @@ void WalletView::setDynamicGUI(DynamicGUI *gui)
         // Connect HD enabled state signal
         connect(this, SIGNAL(hdEnabledStatusChanged(int)), gui, SLOT(setHDStatus(int)));
         
-		// SYSCOIN
-		identityView->setSyscoinGUI(gui);
-		certView->setSyscoinGUI(gui);
+		// Dynamic Identities
+		identityView->setDynamicGUI(gui);
+		certView->setDynamicGUI(gui);
     }
 }
 
