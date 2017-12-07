@@ -356,6 +356,25 @@ void DynamicGUI::createActions()
 #endif
     tabGroup->addAction(dynodeAction);    
 
+	// SYSCOIN
+	identityListAction = new QAction(QIcon(":/icons/" + theme + "/identity"), tr("Identityes"), this);
+    identityListAction->setStatusTip(tr("Manage identityes"));
+    identityListAction->setToolTip(identityListAction->statusTip());
+    identityListAction->setCheckable(true);
+    identityListAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    tabGroup->addAction(identityListAction);
+	
+    certListAction = new QAction(QIcon(":/icons/" + theme + "/cert"), tr("Certificates"), this);
+    certListAction->setStatusTip(tr("Manage Certificates"));
+    certListAction->setToolTip(certListAction->statusTip());
+    certListAction->setCheckable(true);
+    certListAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    tabGroup->addAction(certListAction);
+
+    // Hide buttons until we fixed the issues (win and mac)
+	identityListAction->setVisible (true);
+	certListAction->setVisible (true);
+
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -372,6 +391,10 @@ void DynamicGUI::createActions()
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
     connect(dynodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(dynodeAction, SIGNAL(triggered()), this, SLOT(gotoDynodePage()));
+    connect(identityListAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(identityListAction, SIGNAL(triggered()), this, SLOT(gotoIdentityListPage()));
+    connect(certListAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(certListAction, SIGNAL(triggered()), this, SLOT(gotoCertListPage()));
 
 #endif // ENABLE_WALLET
 
@@ -566,7 +589,9 @@ void DynamicGUI::createToolBars()
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
         toolbar->addAction(dynodeAction);
- 
+ 		toolbar->addAction(identityListAction);
+		toolbar->addAction(certListAction);
+
         /** Create additional container for toolbar and walletFrame and make it the central widget.
             This is a workaround mostly for toolbar styling on Mac OS but should work fine for every other OSes too.
         */
@@ -711,6 +736,8 @@ void DynamicGUI::setWalletActionsEnabled(bool enabled)
     usedSendingAddressesAction->setEnabled(enabled);
     usedReceivingAddressesAction->setEnabled(enabled);
     openAction->setEnabled(enabled);
+    identityListAction->setEnabled(enabled);
+    certListAction->setEnabled(enabled);
 }
 
 void DynamicGUI::createTrayIcon(const NetworkStyle *networkStyle)
@@ -901,6 +928,16 @@ void DynamicGUI::gotoSignMessageTab(QString addr)
 void DynamicGUI::gotoVerifyMessageTab(QString addr)
 {
     if (walletFrame) walletFrame->gotoVerifyMessageTab(addr);
+}
+
+void SyscoinGUI::gotoIdentityListPage()
+{
+    if (walletFrame) walletFrame->gotoIdentityListPage();
+}
+
+void SyscoinGUI::gotoCertListPage()
+{
+    if (walletFrame) walletFrame->gotoCertListPage();
 }
 #endif // ENABLE_WALLET
 

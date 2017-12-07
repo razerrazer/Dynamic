@@ -22,6 +22,9 @@
 #include "transactionview.h"
 #include "walletmodel.h"
 
+#include "identityview.h"
+#include "certview.h"
+
 #include "dynodeconfig.h"
 #include "ui_interface.h"
 
@@ -43,20 +46,23 @@ WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
 {
     // Create tabs
     overviewPage = new OverviewPage(platformStyle);
-
-
     sendCoinsPage = new SendCoinsDialog(platformStyle);
-
     receiveCoinsPage = new ReceiveCoinsDialog(platformStyle);
-
     usedSendingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
     usedReceivingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
+
+    identityListPage = new QStackedWidget();
+	certListPage = new QStackedWidget();
+    identityView = new IdentityView(platformStyle, identityListPage);
+	certView = new CertView(platformStyle, certListPage);
 
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
     QHBoxLayout *hbox_buttons = new QHBoxLayout();
     transactionView = new TransactionView(platformStyle, this);
+	
     vbox->addWidget(transactionView);
+
     QPushButton *exportButton = new QPushButton(tr("&Export"), this);
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
     if (platformStyle->getImagesOnButtons()) {
@@ -90,7 +96,9 @@ WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
     addWidget(sendCoinsPage);
     addWidget(receiveCoinsPage);
     addWidget(transactionsPage);
-
+	addWidget(identityListPage);
+	addWidget(certListPage);
+	
     if (settings.value("fShowDynodesTab").toBool()) {
         addWidget(dynodeListPage);
     }
@@ -140,6 +148,10 @@ void WalletView::setDynamicGUI(DynamicGUI *gui)
 
         // Connect HD enabled state signal
         connect(this, SIGNAL(hdEnabledStatusChanged(int)), gui, SLOT(setHDStatus(int)));
+        
+		// SYSCOIN
+		identityView->setSyscoinGUI(gui);
+		certView->setSyscoinGUI(gui);
     }
 }
 
@@ -153,6 +165,9 @@ void WalletView::setClientModel(ClientModel *_clientModel)
     if (settings.value("fShowDynodesTab").toBool()) {
         dynodeListPage->setClientModel(_clientModel);
     }
+    
+    identityView->setClientModel(clientModel);
+	certView->setClientModel(clientModel);
 }
 
 void WalletView::setWalletModel(WalletModel *_walletModel)
@@ -191,6 +206,9 @@ void WalletView::setWalletModel(WalletModel *_walletModel)
 
         // Show progress dialog
         connect(_walletModel, SIGNAL(showProgress(QString,int)), this, SLOT(showProgress(QString,int)));
+        
+        identityView->setWalletModel(walletModel);
+        certView->setWalletModel(walletModel);
     }
 }
 
@@ -235,6 +253,16 @@ void WalletView::gotoReceiveCoinsPage()
 void WalletView::gotoHistoryPage()
 {
     setCurrentWidget(transactionsPage);
+}
+
+void WalletView::gotoIdentityListPage()
+{
+    setCurrentWidget(identityListPage);
+}
+
+void WalletView::gotoCertListPage()
+{
+    setCurrentWidget(certListPage);
 }
 
 void WalletView::gotoDynodePage()

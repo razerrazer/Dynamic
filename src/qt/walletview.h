@@ -24,6 +24,8 @@ class ReceiveCoinsDialog;
 class AddressBookPage;
 class TransactionView;
 class WalletModel;
+class IdentityView;
+class CertView;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -72,7 +74,12 @@ private:
     QWidget *transactionsPage;
     TransactionView *transactionView;
     DynodeList *dynodeListPage;
+    IdentityView *identityView;
+	CertView *certView;
 
+    QStackedWidget* identityListPage;
+	QStackedWidget *certListPage;
+    
     QProgressDialog *progressDialog;
     QLabel *transactionSum;
     const PlatformStyle *platformStyle;
@@ -88,7 +95,11 @@ public Q_SLOTS:
     void gotoHistoryPage();
     /** Switch to Dynode page */
     void gotoDynodePage();
-
+	/** Switch to Identity Page */
+    void gotoIdentityListPage();
+    /** Switch to Certificate Page */
+    void gotoCertListPage();
+    
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
