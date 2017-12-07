@@ -78,6 +78,7 @@ DYNAMIC_CORE_H = identity.h cert.h \
   bloom.h \
   cachemap.h \
   cachemultimap.h \
+  cert.h \
   chain.h \
   chainparams.h \
   chainparamsbase.h \
@@ -117,6 +118,7 @@ DYNAMIC_CORE_H = identity.h cert.h \
   hdchain.h \
   httprpc.h \
   httpserver.h \
+  identity.h \
   indirectmap.h \
   init.h \
   instantsend.h \
@@ -213,6 +215,7 @@ libdynamic_server_a_SOURCES = identity.cpp cert.cpp \
   addrman.cpp \
   alert.cpp \
   bloom.cpp \
+  cert.cpp \
   chain.cpp \
   checkpoints.cpp \
   dbwrapper.cpp \
@@ -230,6 +233,7 @@ libdynamic_server_a_SOURCES = identity.cpp cert.cpp \
   governance-votedb.cpp \
   httprpc.cpp \
   httpserver.cpp \
+  identity.cpp \
   init.cpp \
   instantsend.cpp \
   merkleblock.cpp \

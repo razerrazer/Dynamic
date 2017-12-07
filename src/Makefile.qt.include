@@ -44,8 +44,14 @@ QT_FORMS_UI = \
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
   qt/moc_addresstablemodel.cpp \
+  qt/moc_aliaslistpage.cpp \
+  qt/moc_aliastablemodel.cpp \
+  qt/moc_aliasview.cpp \
   qt/moc_askpassphrasedialog.cpp \
   qt/moc_bantablemodel.cpp \
+  qt/moc_certlistpage.cpp \
+  qt/moc_certtablemodel.cpp \
+  qt/moc_certview.cpp \
   qt/moc_clientmodel.cpp \
   qt/moc_coincontroldialog.cpp \
   qt/moc_coincontroltreewidget.cpp \
@@ -56,11 +62,15 @@ QT_MOC_CPP = \
   qt/moc_dynamicunits.cpp \
   qt/moc_dynodelist.cpp \
   qt/moc_editaddressdialog.cpp \
+  qt/moc_editaliasdialog.cpp \
+  qt/moc_editcertdialog.cpp \
   qt/moc_guiutil.cpp \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
   qt/moc_modaloverlay.cpp \
+  qt/moc_myaliaslistpage.cpp \
+  qt/moc_mycertlistpage.cpp \
   qt/moc_notificator.cpp \
   qt/moc_openuridialog.cpp \
   qt/moc_optionsdialog.cpp \
@@ -77,6 +87,7 @@ QT_MOC_CPP = \
   qt/moc_rpcconsole.cpp \
   qt/moc_sendcoinsdialog.cpp \
   qt/moc_sendcoinsentry.cpp \
+  qt/moc_signverifymessagedialog.cpp \
   qt/moc_signverifymessagedialog.cpp \
   qt/moc_splashscreen.cpp \
   qt/moc_trafficgraphwidget.cpp \
@@ -113,8 +124,14 @@ PROTOBUF_PROTO = qt/paymentrequest.proto
 DYNAMIC_QT_H = \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
+  qt/aliaslistpage.h \
+  qt/aliastablemodel.h \
+  qt/aliasview.h \
   qt/askpassphrasedialog.h \
   qt/bantablemodel.h \
+  qt/certlistpage.h \
+  qt/certtablemodel.h \
+  qt/certview.h \
   qt/clientmodel.h \
   qt/coincontroldialog.h \
   qt/coincontroltreewidget.h \
@@ -125,12 +142,16 @@ DYNAMIC_QT_H = \
   qt/dynamicunits.h \
   qt/dynodelist.h \
   qt/editaddressdialog.h \
+  qt/editaliasdialog.h \
+  qt/editcertdialog.h \
   qt/guiconstants.h \
   qt/guiutil.h \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
   qt/modaloverlay.h \
+  qt/myaliaslistpage.h \
+  qt/mycertlistpage.h \
   qt/networkstyle.h \
   qt/notificator.h \
   qt/openuridialog.h \
@@ -150,6 +171,7 @@ DYNAMIC_QT_H = \
   qt/rpcconsole.h \
   qt/sendcoinsdialog.h \
   qt/sendcoinsentry.h \
+  qt/signrawtxdialog.h \
   qt/signverifymessagedialog.h \
   qt/splashscreen.h \
   qt/trafficgraphdata.h \
@@ -268,11 +290,21 @@ if ENABLE_WALLET
 DYNAMIC_QT_CPP += \
   qt/addressbookpage.cpp \
   qt/addresstablemodel.cpp \
+  qt/aliaslistpage.cpp \
+  qt/aliastablemodel.cpp \
+  qt/aliasview.cpp \
   qt/askpassphrasedialog.cpp \
+  qt/certlistpage.cpp \
+  qt/certtablemodel.cpp \
+  qt/certview.cpp \
   qt/coincontroldialog.cpp \
   qt/coincontroltreewidget.cpp \
   qt/dynodelist.cpp \
   qt/editaddressdialog.cpp \
+  qt/editaliasdialog.cpp \
+  qt/editcertdialog.cpp \
+  qt/myaliaslistpage.cpp \
+  qt/mycertlistpage.cpp \
   qt/openuridialog.cpp \
   qt/overviewpage.cpp \
   qt/paymentrequestplus.cpp \
@@ -283,6 +315,7 @@ DYNAMIC_QT_CPP += \
   qt/recentrequeststablemodel.cpp \
   qt/sendcoinsdialog.cpp \
   qt/sendcoinsentry.cpp \
+  qt/sendrawtxdialog.cpp \
   qt/signverifymessagedialog.cpp \
   qt/transactiondesc.cpp \
   qt/transactiondescdialog.cpp \
