@@ -41,6 +41,8 @@
 #include "validationinterface.h"
 #include "versionbits.h"
 #include "fluid.h"
+#include "identity.h"
+#include "cert.h"
 
 #include <atomic>
 #include <sstream>
@@ -556,6 +558,51 @@ std::string FormatStateMessage(const CValidationState &state)
         state.GetRejectCode());
 }
 
+using namespace std; // Sorry Spencer
+
+bool CheckDynamicInputs(const CTransaction& tx, const CCoinsViewCache& inputs, bool fJustCheck, int nHeight=0)
+{
+    vector<vector<unsigned char> > vvchArgs;
+    int op;
+    int nOut;   
+    if(nHeight == 0)
+        nHeight = chainActive.Height();
+    string errorMessage;
+    if(tx.nVersion == GetDynamicTxVersion())
+    {
+        bool good = true;
+        for(unsigned int j = 0;j<tx.vout.size();j++)
+        {
+            if(!good)
+                break;
+            if(DecodeIdentityScript(tx.vout[j].scriptPubKey, op, vvchArgs))
+            {
+                errorMessage.clear();
+                good = CheckIdentityInputs(tx, op, j, vvchArgs, inputs, fJustCheck, nHeight, errorMessage);
+                if(fDebug && !errorMessage.empty())
+                    LogPrintf("%s\n", errorMessage.c_str());
+            }
+        }
+        if(good)
+        {
+            if(DecodeCertTx(tx, op, nOut, vvchArgs))
+            {
+                errorMessage.clear();
+                good = CheckCertInputs(tx, op, nOut, vvchArgs, inputs, fJustCheck, nHeight, errorMessage);  
+                if(fDebug && !errorMessage.empty())
+                    LogPrintf("%s\n", errorMessage.c_str());
+            }
+        }
+        if(!good)
+        {
+            return false;
+        }
+        
+    }
+    return true;    
+    
+}
+
 static CAmount GetMinRelayFee(const CTransaction& tx, unsigned int nBytes, bool fAllowFree)
 {
     {
@@ -619,7 +666,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
     // sure that such transactions will be mined (unless we're on
     // -testnet/-regtest).
     const CChainParams& chainparams = Params();
-    if (fRequireStandard && tx.nVersion >= 2 && VersionBitsTipState(chainparams.GetConsensus(), Consensus::DEPLOYMENT_CSV) != THRESHOLD_ACTIVE) {
+    if (fRequireStandard && tx.nVersion != GetDynamicTxVersion() && tx.nVersion >= 2 && VersionBitsTipState(chainparams.GetConsensus(), Consensus::DEPLOYMENT_CSV) != THRESHOLD_ACTIVE) {
         return state.DoS(0, false, REJECT_NONSTANDARD, "premature-version2-tx");
     }
 
@@ -1032,6 +1079,10 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
             return error("%s: BUG! PLEASE REPORT THIS! ConnectInputs failed against MANDATORY but not STANDARD flags %s, %s",
                 __func__, hash.ToString(), FormatStateMessage(state));
         }
+
+        // DYNAMIC
+        if (!CheckDynamicInputs(tx, view, true))
+            return false;
 
         // Remove conflicting transactions from the mempool
         BOOST_FOREACH(const CTxMemPool::txiter it, allConflicting)
@@ -2021,7 +2072,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     {
         const CTransaction &tx = block.vtx[i];
         const uint256 txhash = tx.GetHash();
-
+        
         nInputs += tx.vin.size();
         nSigOps += GetLegacySigOpCount(tx);
         if (nSigOps > MAX_BLOCK_SIGOPS)
@@ -2102,6 +2153,11 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
             if (!CheckInputs(tx, state, view, fScriptChecks, flags, fCacheResults, nScriptCheckThreads ? &vChecks : NULL))
                 return error("ConnectBlock(): CheckInputs on %s failed with %s",
                     tx.GetHash().ToString(), FormatStateMessage(state));
+
+            // DYNAMIC
+            if (!CheckDynamicInputs(tx, view, fJustCheck, pindex->nHeight))
+                return error("ConnectBlock(): CheckDynamicInputs on %s failed",tx.GetHash().ToString());
+
             control.Add(vChecks);
         }
 

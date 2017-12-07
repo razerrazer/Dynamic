@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2009-2017 The Syscoin Core developers
+// Copyright (c) 2009-2017 The Dynamic Core developers
 // Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -200,8 +200,8 @@ enum opcodetype
     OP_UPDATE_FEES = 0xc6,
     OP_FREEZE_ADDRESS = 0xc7,
     OP_RELEASE_ADDRESS = 0xc8,
-
-    // identity alias system
+    
+    // identity identity system
     OP_IDENTITY_NEW = 0xd1,
     OP_IDENTITY_DELETE = 0xd2,
     OP_IDENTITY_PAYMENT = 0xd3,
@@ -209,25 +209,10 @@ enum opcodetype
     OP_IDENTITY_UPDATE = 0xd5,
     OP_IDENTITY_MULTISIG = 0xd6,
 
-    // distributed exchange
-    OP_OFFER_ACTIVATE = 0x04,
-    OP_OFFER_UPDATE = 0x05,
-    OP_OFFER_ACCEPT = 0x06,
-    OP_OFFER_ACCEPT_FEEDBACK = 0x07,
-
     // distributed licensing system
     OP_CERT_ACTIVATE = 0x08,
     OP_CERT_UPDATE = 0x09,
     OP_CERT_TRANSFER = 0x0a,
-
-    // distributed escrow system
-    OP_ESCROW_ACTIVATE = 0x0b,
-    OP_ESCROW_RELEASE = 0x0c,
-    OP_ESCROW_REFUND = 0x0d,
-    OP_ESCROW_COMPLETE = 0x0e,
-
-    // encrypted messaging
-    OP_MESSAGE_ACTIVATE = 0x0f,
 
     // dynamic extended reserved 
     OP_DYNAMIC_EXTENDED = 0x10,

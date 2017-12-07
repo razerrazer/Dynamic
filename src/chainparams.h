@@ -44,14 +44,25 @@ struct CCheckpointData {
 class CChainParams
 {
 public:
+    // DYNAMIC allow old DYNAMIC address scheme
     enum Base58Type {
         PUBKEY_ADDRESS,
+        PUBKEY_ADDRESS_DYN,
+        PUBKEY_ADDRESS_SYS,
         SCRIPT_ADDRESS,
-        SECRET_KEY,     // BIP16
-        EXT_PUBLIC_KEY, // BIP32
-        EXT_SECRET_KEY, // BIP32
+        SCRIPT_ADDRESS_SYS,
+        SECRET_KEY,
+        SECRET_KEY_DYN,
+        EXT_PUBLIC_KEY,
+        EXT_SECRET_KEY,
 
         MAX_BASE58_TYPES
+    };  
+
+    enum AddressType {
+        ADDRESS_DYN,
+        ADDRESS_SYS,
+        MAX_ADDRESS_TYPES
     };
 
     const Consensus::Params& GetConsensus() const { return consensus; }

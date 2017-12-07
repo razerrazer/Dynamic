@@ -1,7 +1,7 @@
-// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
-// Copyright (c) 2014-2017 The Dash Core Developers
-// Copyright (c) 2009-2017 The Bitcoin Developers
 // Copyright (c) 2009-2017 Satoshi Nakamoto
+// Copyright (c) 2009-2017 The Bitcoin Developers
+// Copyright (c) 2014-2017 The Dash Core Developers
+// Copyright (c) 2016-2017 Duality Blockchain Solutions Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,6 +11,7 @@
 #include "keystore.h"
 #include "support/allocators/secure.h"
 #include "serialize.h"
+#include "support/pagelocker.h"
 
 class uint256;
 
@@ -73,13 +74,12 @@ typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMate
 /** Encryption/decryption context with key information */
 class CCrypter
 {
-private:
-    std::vector<unsigned char, secure_allocator<unsigned char>> vchKey;
-    std::vector<unsigned char, secure_allocator<unsigned char>> vchIV;
-    bool fKeySet;
-
-
+// private:
 public:
+    unsigned char chKey[WALLET_CRYPTO_KEY_SIZE];
+    unsigned char chIV[WALLET_CRYPTO_IV_SIZE];
+    bool fKeySet;
+    
     bool SetKeyFromPassphrase(const SecureString &strKeyData, const std::vector<unsigned char>& chSalt, const unsigned int nRounds, const unsigned int nDerivationMethod);
     bool Encrypt(const CKeyingMaterial& vchPlaintext, std::vector<unsigned char> &vchCiphertext) const;
     bool Decrypt(const std::vector<unsigned char>& vchCiphertext, CKeyingMaterial& vchPlaintext) const;
@@ -87,21 +87,28 @@ public:
 
     void CleanKey()
     {
-        memory_cleanse(vchKey.data(), vchKey.size());
-        memory_cleanse(vchIV.data(), vchIV.size());
+        memory_cleanse(chKey, sizeof(chKey));
+        memory_cleanse(chIV, sizeof(chIV));
         fKeySet = false;
     }
 
     CCrypter()
     {
         fKeySet = false;
-        vchKey.resize(WALLET_CRYPTO_KEY_SIZE);
-        vchIV.resize(WALLET_CRYPTO_IV_SIZE);
+
+        // Try to keep the key data out of swap (and be a bit over-careful to keep the IV that we don't even use out of swap)
+        // Note that this does nothing about suspend-to-disk (which will put all our key data on disk)
+        // Note as well that at no point in this program is any attempt made to prevent stealing of keys by reading the memory of the running process.
+        LockedPageManager::Instance().LockRange(&chKey[0], sizeof chKey);
+        LockedPageManager::Instance().LockRange(&chIV[0], sizeof chIV);
     }
 
     ~CCrypter()
     {
         CleanKey();
+        
+        LockedPageManager::Instance().UnlockRange(&chKey[0], sizeof chKey);
+        LockedPageManager::Instance().UnlockRange(&chIV[0], sizeof chIV);
     }
 };
 

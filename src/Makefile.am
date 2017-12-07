@@ -59,12 +59,12 @@ if BUILD_DYNAMICD
 endif
 
 if BUILD_DYNAMIC_UTILS
-  bin_PROGRAMS += dynamic-cli dynamic-tx
+  bin_PROGRAMS += dynamic-cli
 endif
 
 .PHONY: FORCE check-symbols check-security
 # dynamic #
-DYNAMIC_CORE_H = \
+DYNAMIC_CORE_H = identity.h cert.h \
   activedynode.h \
   addrdb.h \
   addressindex.h \
@@ -168,6 +168,7 @@ DYNAMIC_CORE_H = \
   support/allocators/zeroafterfree.h \
   support/cleanse.h \
   support/lockedpool.h \
+  support/pagelocker.h \
   sync.h \
   threadinterrupt.h \
   threadsafety.h \
@@ -206,7 +207,7 @@ libdynamic_util_a-clientversion.$(OBJEXT): obj/build.h
 # server: shared between dynamicd and dynamic-qt
 libdynamic_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libdynamic_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-libdynamic_server_a_SOURCES = \
+libdynamic_server_a_SOURCES = identity.cpp cert.cpp \
   activedynode.cpp \
   addrdb.cpp \
   addrman.cpp \
@@ -377,6 +378,7 @@ libdynamic_util_a_SOURCES = \
   rpcprotocol.cpp \
   support/cleanse.cpp \
   support/lockedpool.cpp \
+  support/pagelocker.cpp \
   sync.cpp \
   threadinterrupt.cpp \
   uint256.cpp \
@@ -446,26 +448,6 @@ dynamic_cli_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBDYNAMIC_UTIL)
 dynamic_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
-#
-
-# dynamic-tx binary #
-dynamic_tx_SOURCES = dynamic-tx.cpp
-dynamic_tx_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES)
-dynamic_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dynamic_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-
-if TARGET_WINDOWS
-dynamic_tx_SOURCES += dynamic-tx-res.rc
-endif
-
-dynamic_tx_LDADD = \
-  $(LIBUNIVALUE) \
-  $(LIBDYNAMIC_COMMON) \
-  $(LIBDYNAMIC_UTIL) \
-  $(LIBDYNAMIC_CRYPTO) \
-  $(LIBSECP256K1)
-
-dynamic_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # dynamicconsensus library #
