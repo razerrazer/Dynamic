@@ -15,11 +15,11 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSettings>
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include <QDateTime>
 using namespace std;
 
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 EditIdentityDialog::EditIdentityDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditIdentityDialog), mapper(0), mode(mode), model(0)
@@ -52,7 +52,7 @@ EditIdentityDialog::EditIdentityDialog(Mode mode, QWidget *parent) :
     ui->privateDisclaimer->setText(QString("<font color='blue'>") + tr("This is to private profile information which is encrypted and only available to you. This is useful for when sending notes to a merchant through the payment screen so you don't have to type it out everytime.") + QString("</font>"));
 	ui->passwordDisclaimer->setText(QString("<font color='blue'>") + tr("Enter a password or passphrase that will be used to unlock this identity via webservices such as BlockMarket. Important: Do not forget or misplace this password, it is the lock to your identity.") + QString("</font>"));
 	ui->publicDisclaimer->setText(QString("<font color='blue'>") + tr("This is public profile information that anyone on the network can see. Fill this in with things you would like others to know about you.") + QString("</font>"));
-	ui->reqsigsDisclaimer->setText(QString("<font color='blue'>") + tr("The number of required signatures ensures that not one person can control this identity and anything service that this identity uses (certificates, messages, offers, escrows).") + QString("</font>"));
+	ui->reqsigsDisclaimer->setText(QString("<font color='blue'>") + tr("The number of required signatures ensures that not one person can control this identity and anything service that this identity uses.") + QString("</font>"));
 	ui->acceptCertTransfersDisclaimer->setText(QString("<font color='blue'>") + tr("Would you like to accept certificates transferred to this identity? Select 'Yes' otherwise if you want to block others from sending certificates to this identity select 'No'.") + QString("</font>"));	
 	ui->multisigTitle->setText(QString("<font color='blue'>") + tr("Set up your multisig identity here with the required number of signatures and the identities that are capable of signing when this identity is updated. A user from this list can request an update to the identity and the other signers must sign the raw multisig transaction using the 'Sign Multisig Tx' button in order for the identity to complete the update. Services that use this identity require identity updates prior to updating those services which allows all services to benefit from identity multisig technology.") + QString("</font>"));
 	ui->reqSigsEdit->setValidator( new QIntValidator(0, 50, this) );

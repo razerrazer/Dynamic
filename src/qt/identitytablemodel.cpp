@@ -12,13 +12,13 @@
 #include "base58.h"
 
 #include <QFont>
-#include "rpc/server.h"
+#include "rpcserver.h"
 using namespace std;
 
 const QString IdentityTableModel::Identity = "A";
 
 
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 struct IdentityTableEntry
 {
     enum Type {

@@ -13,17 +13,16 @@
 #include "dynamicgui.h"
 #include "editidentitydialog.h"
 #include "signrawtxdialog.h"
-#include "mywhitelistofferdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
 #include <QSortFilterProxyModel>
 #include <QClipboard>
 #include <QMessageBox>
 #include <QMenu>
-#include "rpc/server.h"
+#include "rpcserver.h"
 
 using namespace std;
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 MyIdentityListPage::MyIdentityListPage(const PlatformStyle *platformStyle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MyIdentityListPage),
@@ -213,11 +212,14 @@ void MyIdentityListPage::on_refreshButton_clicked()
         return;
     model->refreshIdentityTable();
 }
+// TODO: Remove Whitelist Feature
 void MyIdentityListPage::on_whitelistButton_clicked()
 {
-    MyWhitelistOfferDialog dlg(platformStyle);
+/*  MyWhitelistOfferDialog dlg(platformStyle);
 	dlg.setModel(walletModel);
     dlg.exec();    
+*/
+	return;
 }
 void MyIdentityListPage::on_newIdentity_clicked()
 {

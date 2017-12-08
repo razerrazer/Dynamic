@@ -10,7 +10,7 @@
 
 #include "wallet/wallet.h"
 #include "base58.h"
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include <QFont>
 #include <QSettings>
 using namespace std;
@@ -19,7 +19,7 @@ using namespace std;
 const QString CertTableModel::Cert = "C";
 
 
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 struct CertTableEntry
 {
     enum Type {

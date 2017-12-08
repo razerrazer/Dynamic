@@ -25,14 +25,14 @@
 #include <QKeyEvent>
 #include <QInputDialog>
 #include <QMenu>
-#include "main.h"
-#include "rpc/server.h"
+#include "validation.h"
+#include "rpcserver.h"
 
 #include <QSettings>
 using namespace std;
 
 
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 
 IdentityListPage::IdentityListPage(const PlatformStyle *platformStyle, QWidget *parent) :
     QDialog(parent),

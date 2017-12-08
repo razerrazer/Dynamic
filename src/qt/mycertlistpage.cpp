@@ -12,7 +12,6 @@
 #include "platformstyle.h"
 #include "dynamicgui.h"
 #include "editcertdialog.h"
-#include "editofferdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
 
@@ -21,6 +20,9 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QMenu>
+
+#include <univalue.h>
+
 MyCertListPage::MyCertListPage(const PlatformStyle *platformStyle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MyCertListPage),
@@ -114,9 +116,10 @@ MyCertListPage::~MyCertListPage()
 {
     delete ui;
 }
+// TODO: Remove sell feature
 void MyCertListPage::on_sellCertButton_clicked()
 {
-    if(!model || !walletModel)
+/*    if(!model || !walletModel)
         return;
     if(!ui->tableView->selectionModel())
         return;
@@ -138,6 +141,8 @@ void MyCertListPage::on_sellCertButton_clicked()
     EditOfferDialog dlg(EditOfferDialog::NewCertOffer, "", certGUID, identity, category);
     dlg.setModel(walletModel,0);
     dlg.exec();
+*/
+	return;
 }
 void MyCertListPage::showEvent ( QShowEvent * event )
 {
