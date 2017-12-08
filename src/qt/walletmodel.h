@@ -27,6 +27,8 @@ class PlatformStyle;
 class RecentRequestsTableModel;
 class TransactionTableModel;
 class WalletModelTransaction;
+class IdentityTableModel;
+class CertTableModel;
 
 class CCoinControl;
 class CKeyID;
@@ -35,6 +37,7 @@ class COutput;
 class CPubKey;
 class CWallet;
 class uint256;
+class UniValue;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -125,7 +128,10 @@ public:
         TransactionCreationFailed, // Error returned when wallet is still locked
         TransactionCommitFailed,
         AbsurdFee,
-        PaymentRequestExpired
+        PaymentRequestExpired,
+        
+        OKMultisig,
+		InvalidMultisig
     };
 
     enum EncryptionStatus
@@ -141,6 +147,10 @@ public:
     AddressTableModel *getAddressTableModel();
     TransactionTableModel *getTransactionTableModel();
     RecentRequestsTableModel *getRecentRequestsTableModel();
+    IdentityTableModel *getIdentityTableModelMine();
+    IdentityTableModel *getIdentityTableModelAll();
+    CertTableModel *getCertTableModelMine();
+    CertTableModel *getCertTableModelAll();
 
     CAmount getBalance(const CCoinControl *coinControl = NULL) const;
     CAmount getUnconfirmedBalance() const;
@@ -233,6 +243,12 @@ private:
     TransactionTableModel *transactionTableModel;
     RecentRequestsTableModel *recentRequestsTableModel;
 
+	// SYSCOIN
+	IdentityTableModel *identityTableModelMine;
+    IdentityTableModel *identityTableModelAll;
+    CertTableModel *certTableModelMine;
+    CertTableModel *certTableModelAll;
+    
     // Cache some values to be able to detect changes
     CAmount cachedBalance;
     CAmount cachedUnconfirmedBalance;
@@ -288,6 +304,11 @@ public Q_SLOTS:
     void updateWatchOnlyFlag(bool fHaveWatchonly);
     /* Current, immature or unconfirmed balance might have changed - emit 'balanceChanged' if so */
     void pollBalanceChanged();
+
+    void updateIdentity();
+    void updateCert();
 };
+
+extern void appendListIdentities(UniValue& defaultIdentityArray, bool allIdentities=false);
 
 #endif // DYNAMIC_QT_WALLETMODEL_H

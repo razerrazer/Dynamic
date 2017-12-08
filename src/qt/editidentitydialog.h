@@ -3,15 +3,15 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef EDITALIASDIALOG_H
-#define EDITALIASDIALOG_H
+#ifndef EDITIDENTITYDIALOG_H
+#define EDITIDENTITYDIALOG_H
 
 #include <QDialog>
 
 namespace Ui {
-    class EditAliasDialog;
+    class EditIdentityDialog;
 }
-class AliasTableModel;
+class IdentityTableModel;
 class WalletModel;
 QT_BEGIN_NAMESPACE
 class QDataWidgetMapper;
@@ -19,28 +19,28 @@ QT_END_NAMESPACE
 
 /** Dialog for editing an address and associated information.
  */
-class EditAliasDialog : public QDialog
+class EditIdentityDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     enum Mode {
-        NewDataAlias,
-        NewAlias,
-        EditDataAlias,
-        EditAlias,
-		TransferAlias
+        NewDataIdentity,
+        NewIdentity,
+        EditDataIdentity,
+        EditIdentity,
+		TransferIdentity
     };
 
-    explicit EditAliasDialog(Mode mode, QWidget *parent = 0);
-    ~EditAliasDialog();
+    explicit EditIdentityDialog(Mode mode, QWidget *parent = 0);
+    ~EditIdentityDialog();
 
-    void setModel(WalletModel*,AliasTableModel *model);
+    void setModel(WalletModel*,IdentityTableModel *model);
     void loadRow(int row);
-	void loadAliasDetails();
+	void loadIdentityDetails();
 
-    QString getAlias() const;
-    void setAlias(const QString &alias);
+    QString getIdentity() const;
+    void setIdentity(const QString &identity);
 
 public Q_SLOTS:
     void accept();
@@ -49,18 +49,18 @@ public Q_SLOTS:
 	void on_addButton_clicked();
 	void on_deleteButton_clicked();
 	void reqSigsChanged();
-	void expiryChanged(const QString& alias);
+	void expiryChanged(const QString& identity);
 	void onCustomExpireCheckBoxChanged(bool toggled);
 private:
     bool saveCurrentRow();
 
-    Ui::EditAliasDialog *ui;
+    Ui::EditIdentityDialog *ui;
     QDataWidgetMapper *mapper;
     Mode mode;
-    AliasTableModel *model;
+    IdentityTableModel *model;
 	WalletModel* walletModel;
-    QString alias;
+    QString identity;
 	QString expiredStr;
 };
 
-#endif // EDITALIASDIALOG_H
+#endif // EDITIDENTITYDIALOG_H

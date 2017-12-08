@@ -3,16 +3,16 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALIASVIEW_H
-#define ALIASVIEW_H
+#ifndef IDENTITYVIEW_H
+#define IDENTITYVIEW_H
 
 #include <QStackedWidget>
 
 class DynamicGUI;
 class ClientModel;
 class WalletModel;
-class MyAliasListPage;
-class AliasListPage;
+class MyIdentityListPage;
+class IdentityListPage;
 class PlatformStyle;
 
 QT_BEGIN_NAMESPACE
@@ -26,16 +26,16 @@ class QAction;
 QT_END_NAMESPACE
 
 /*
-  AliasView class. This class represents the view to the Dynamic aliases
+  IdentityView class. This class represents the view to the Dynamic identities
   
 */
-class AliasView: public QObject
+class IdentityView: public QObject
  {
      Q_OBJECT
 
 public:
-    explicit AliasView(const PlatformStyle *platformStyle, QStackedWidget *parent);
-    ~AliasView();
+    explicit IdentityView(const PlatformStyle *platformStyle, QStackedWidget *parent);
+    ~IdentityView();
 
     void setDynamicGUI(DynamicGUI *gui);
     /** Set the client model.
@@ -56,16 +56,16 @@ private:
     WalletModel *walletModel;
 
     QTabWidget *tabWidget;
-    MyAliasListPage *myAliasListPage;
-    AliasListPage *aliasListPage;
+    MyIdentityListPage *myIdentityListPage;
+    IdentityListPage *identityListPage;
 
 public:
     /** Switch to offer page */
-    void gotoAliasListPage();
+    void gotoIdentityListPage();
 
 Q_SIGNALS:
     /** Signal that we want to show the main window */
     void showNormalIfMinimized();
 };
 
-#endif // ALIASVIEW_H
+#endif // IDENTITYVIEW_H
