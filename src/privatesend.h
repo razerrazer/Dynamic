@@ -6,6 +6,7 @@
 #ifndef PRIVATESEND_H
 #define PRIVATESEND_H
 
+#include "chain.h"
 #include "chainparams.h"
 #include "primitives/transaction.h"
 #include "pubkey.h"
@@ -23,7 +24,7 @@ static const int PRIVATESEND_QUEUE_TIMEOUT          = 30;
 static const int PRIVATESEND_SIGNING_TIMEOUT        = 15;
 
 //! minimum peer version accepted by mixing pool
-static const int MIN_PRIVATESEND_PEER_PROTO_VERSION = 70500;
+static const int MIN_PRIVATESEND_PEER_PROTO_VERSION = 70600;
 
 static const CAmount PRIVATESEND_ENTRY_MAX_SIZE     = 9;
 
@@ -318,6 +319,8 @@ private:
 
     static CCriticalSection cs_mappstx;
 
+    static void CheckPSTXes(int nHeight);
+
 public:
     static void InitStandardDenominations();
     static std::vector<CAmount> GetStandardDenominations() { return vecStandardDenominations; }
@@ -349,7 +352,8 @@ public:
 
     static void AddPSTX(const CPrivatesendBroadcastTx& pstx);
     static CPrivatesendBroadcastTx GetPSTX(const uint256& hash);
-    static void CheckPSTXes(int nHeight);
+
+    static void UpdatedBlockTip(const CBlockIndex *pindex);
 
     static void SyncTransaction(const CTransaction& tx, const CBlock* pblock);
 };
