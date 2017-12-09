@@ -10,9 +10,9 @@
 #include "net.h"
 #include "netbase.h"
 #include "timedata.h"
+#include "txmempool.h"
 #include "util.h"
 #include "utilmoneystr.h"
-#include "core_io.h"
 #include "utiltime.h"
 #include "validation.h"
 
@@ -20,7 +20,10 @@
 #include "wallet/walletdb.h"
 
 Fluid fluid;
+
+#ifdef ENABLE_WALLET
 extern CWallet* pwalletMain;
+#endif //ENABLE_WALLET
 
 bool IsTransactionFluid(CScript txOut) {
     return (txOut.IsProtocolInstruction(MINT_TX)
@@ -47,7 +50,7 @@ bool Fluid::InitiateFluidVerify(CDynamicAddress dynamicAddress) {
 #else
     // Wallet cannot be accessed, cannot continue ahead!
     return false;
-#endif
+#endif //ENABLE_WALLET
 }
 
 /** Checks if any given address is a current master key (invoked by RPC) */
@@ -66,6 +69,80 @@ bool Fluid::IsGivenKeyMaster(CDynamicAddress inputKey) {
         attemptKey.SetString(address);
         if (inputKey.IsValid() && attemptKey.IsValid() && inputKey == attemptKey)
             return true;
+    }
+
+    return false;
+}
+
+/** Checks fluid transactoin operation script amount for invalid values. */
+bool Fluid::CheckFluidOperationScript(const CScript& fluidScriptPubKey, const int64_t timeStamp, std::string& errorMessage, bool fSkipTimeStampCheck) {
+    std::string strFluidOpScript = ScriptToAsmStr(fluidScriptPubKey);
+    std::string verificationWithoutOpCode = GetRidOfScriptStatement(strFluidOpScript);
+    std::string strOperationCode = GetRidOfScriptStatement(strFluidOpScript, 0);
+    if (!fSkipTimeStampCheck) {
+        if (!ExtractCheckTimestamp(strFluidOpScript, timeStamp)) {
+            errorMessage = "CheckFluidOperationScript fluid timestamp is too old.";
+            return false;
+        }
+    }
+    if (IsHex(verificationWithoutOpCode)) {
+        std::string strAmount;
+        std::string strUnHexedFluidOpScript = HexToString(verificationWithoutOpCode);
+        std::vector<std::string> vecSplitScript;
+        SeperateString(strUnHexedFluidOpScript, vecSplitScript, "$");
+        if (vecSplitScript.size() > 1) {
+            strAmount = vecSplitScript[0];
+            CAmount fluidAmount;
+            if (ParseFixedPoint(strAmount, 8, &fluidAmount)) {
+                if (fluidAmount < 0) {
+                    errorMessage = "CheckFluidOperationScript fluid amount is less than zero: " + strAmount;
+                    return false;
+                }
+                else if (strOperationCode == "OP_MINT" && (fluidAmount > FLUID_MAX_FOR_MINT)) {
+                    errorMessage = "CheckFluidOperationScript fluid OP_MINT amount exceeds maximum: " + strAmount;
+                    return false;
+                }
+                else if (strOperationCode == "OP_REWARD_MINING" && (fluidAmount > FLUID_MAX_REWARD_FOR_MINING)) {
+                    errorMessage = "CheckFluidOperationScript fluid OP_REWARD_MINING amount exceeds maximum: " + strAmount;
+                    return false;
+                }
+                else if (strOperationCode == "OP_REWARD_DYNODE" && (fluidAmount > FLUID_MAX_REWARD_FOR_DYNODE)) {
+                    errorMessage = "CheckFluidOperationScript fluid OP_REWARD_DYNODE amount exceeds maximum: " + strAmount;
+                    return false;
+                }
+            }
+        }
+        else {
+            errorMessage = "CheckFluidOperationScript fluid token invalid. " + strUnHexedFluidOpScript;
+            return false;
+        }
+    }
+    else {
+        errorMessage = "CheckFluidOperationScript fluid token is not hex. " + verificationWithoutOpCode;
+        return false;
+    }
+
+    return true;
+}
+
+/** Checks whether fluid transaction is in the memory pool already */
+bool Fluid::CheckIfExistsInMemPool(const CTxMemPool& pool, const CScript& fluidScriptPubKey, std::string& errorMessage) {
+
+    for (const CTxMemPoolEntry& e : pool.mapTx) {
+        const CTransaction& tx = e.GetTx();
+        for (const CTxOut& txOut : tx.vout) {
+            if (IsTransactionFluid(txOut.scriptPubKey)) {
+                std::string strNewFluidScript = ScriptToAsmStr(fluidScriptPubKey);
+                std::string strMemPoolFluidScript = ScriptToAsmStr(txOut.scriptPubKey);
+                std::string strNewTxWithoutOpCode = GetRidOfScriptStatement(strNewFluidScript);
+                std::string strMemPoolTxWithoutOpCode = GetRidOfScriptStatement(strMemPoolFluidScript);
+                if (strNewTxWithoutOpCode == strMemPoolTxWithoutOpCode) {
+                    errorMessage = "CheckIfExistsInMemPool: fluid transaction is already in the memory pool!";
+                    LogPrintf("CheckIfExistsInMemPool: fluid transaction, %s is already in the memory pool! %s\n", tx.GetHash().ToString(), strNewTxWithoutOpCode);
+                    return true;
+                }
+            }
+        }
     }
 
     return false;
@@ -110,7 +187,7 @@ bool Fluid::CheckIfQuorumExists(const std::string consentToken, std::string &mes
     bool fValid = (keyOne.first.ToString() != keyTwo.first.ToString() && keyTwo.first.ToString() != keyThree.first.ToString()
                    && keyOne.first.ToString() != keyThree.first.ToString());
 
-    LogPrintf("CheckIfQuorumExists(): Addresses validating this consent token are: %s, %s and %s\n", keyOne.first.ToString(), keyTwo.first.ToString(), keyThree.first.ToString());
+    LogPrint("fluid", "CheckIfQuorumExists(): Addresses validating this consent token are: %s, %s and %s\n", keyOne.first.ToString(), keyTwo.first.ToString(), keyThree.first.ToString());
 
     if (individual)
         return (keyOne.second || keyTwo.second || keyThree.second);
@@ -129,7 +206,7 @@ bool Fluid::CheckNonScriptQuorum(const std::string consentToken, std::string &me
 
 /** Because some things in life are meant to be intimate, like socks in a drawer */
 bool Fluid::SignIntimateMessage(CDynamicAddress address, std::string unsignedMessage, std::string &stitchedMessage, bool stitch) {
-
+#ifdef ENABLE_WALLET
     CHashWriter ss(SER_GETHASH, 0);
     ss << strMessageMagic;
     ss << unsignedMessage;
@@ -153,6 +230,9 @@ bool Fluid::SignIntimateMessage(CDynamicAddress address, std::string unsignedMes
         stitchedMessage = EncodeBase64(&vchSig[0], vchSig.size());
 
     return true;
+#else
+    return false;
+#endif //ENABLE_WALLET
 }
 
 /** It will perform basic message signing functions */
@@ -202,9 +282,12 @@ bool Fluid::ExtractCheckTimestamp(const std::string consentToken, const int64_t 
         return false;
 
     std::string ls = ptrs.at(1);
+    
     ScrubString(ls, true);
+    int64_t tokenTimeStamp;
+    ParseInt64(ls, &tokenTimeStamp);
 
-    if (timeStamp > StringToInteger(ls) + fluid.MAX_FLUID_TIME_DISTORT)
+    if (timeStamp > tokenTimeStamp + fluid.MAX_FLUID_TIME_DISTORT)
         return false;
 
     return true;
@@ -240,8 +323,10 @@ bool Fluid::GenericParseNumber(const std::string consentToken, const int64_t tim
     ScrubString(lr, true);
     std::string ls = ptrs.at(1);
     ScrubString(ls, true);
+    int64_t tokenTimeStamp;
+    ParseInt64(ls, &tokenTimeStamp);
 
-    if (timeStamp > StringToInteger(ls) + fluid.MAX_FLUID_TIME_DISTORT && !txCheckPurpose)
+    if (timeStamp > tokenTimeStamp + fluid.MAX_FLUID_TIME_DISTORT && !txCheckPurpose)
         return false;
 
     ParseFixedPoint(lr, 8, &coinAmount);
@@ -250,9 +335,9 @@ bool Fluid::GenericParseNumber(const std::string consentToken, const int64_t tim
 }
 
 /** Individually checks the validity of an instruction */
-bool Fluid::GenericVerifyInstruction(const std::string uniqueIdentifier, CDynamicAddress& signer, std::string &messageTokenKey, int whereToLook)
+bool Fluid::GenericVerifyInstruction(const std::string consentToken, CDynamicAddress& signer, std::string &messageTokenKey, int whereToLook)
 {
-    std::string consentTokenNoScript = GetRidOfScriptStatement(uniqueIdentifier);
+    std::string consentTokenNoScript = GetRidOfScriptStatement(consentToken);
     messageTokenKey = "";
     std::vector<std::string> strs;
 
@@ -291,7 +376,7 @@ bool Fluid::GenericVerifyInstruction(const std::string uniqueIdentifier, CDynami
     return true;
 }
 
-bool Fluid::ParseMintKey(int64_t nTime, CDynamicAddress &destination, CAmount &coinAmount, std::string uniqueIdentifier, bool txCheckPurpose) {
+bool Fluid::ParseMintKey(const int64_t nTime, CDynamicAddress &destination, CAmount &coinAmount, std::string uniqueIdentifier, bool txCheckPurpose) {
     std::vector<std::string> ptrs;
 
     if (!ProcessFluidToken(uniqueIdentifier, ptrs, 1))
@@ -304,8 +389,10 @@ bool Fluid::ParseMintKey(int64_t nTime, CDynamicAddress &destination, CAmount &c
     ScrubString(lr, true);
     std::string ls = ptrs.at(1);
     ScrubString(ls, true);
-
-    if (nTime > StringToInteger(ls) + fluid.MAX_FLUID_TIME_DISTORT && !txCheckPurpose)
+    int64_t tokenTimeStamp;
+    ParseInt64(ls, &tokenTimeStamp);
+    
+    if (nTime > tokenTimeStamp + fluid.MAX_FLUID_TIME_DISTORT && !txCheckPurpose)
         return false;
 
     ParseFixedPoint(lr, 8, &coinAmount);
@@ -441,7 +528,6 @@ bool Fluid::CheckTransactionInRecord(CScript fluidInstruction, CBlockIndex* pind
             {
                 std::string existingWithoutOpCode = GetRidOfScriptStatement(existingRecord);
                 LogPrint("fluid", "CheckTransactionInRecord(): operation code removed. existingRecord  = %s verificationString = %s\n", existingWithoutOpCode, verificationWithoutOpCode);
-                LogPrintf("CheckTransactionInRecord(): operation code removed.\nexistingRecord  = %s\nverificationString = %s\n", existingWithoutOpCode, verificationWithoutOpCode);
                 if (existingWithoutOpCode == verificationWithoutOpCode) {
                     LogPrintf("CheckTransactionInRecord(): Attempt to repeat Fluid Transaction: %s\n", existingRecord);
                     return true;

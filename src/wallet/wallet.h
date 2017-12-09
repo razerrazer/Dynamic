@@ -819,9 +819,6 @@ public:
 							const CWalletTx* wtxIn=NULL, int nOut = 0, bool sysTx = false, const CWalletTx* wtxLinkIn=NULL, int nLinkOut = 0, bool bIdentityPay=false);
     
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey, CConnman* connman, std::string strCommand="tx");
-
-    bool CreateNameTx(CScript scriptPubKey, const CAmount& nValue, CWalletTx wtxNameIn, CAmount nFeeInput,
-                       CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, int nSplitBlock, std::string& strFailReason, const CCoinControl *coinControl = NULL);
         
     bool CreateCollateralTransaction(CMutableTransaction& txCollateral, std::string& strReason);
     bool ConvertList(std::vector<CTxIn> vecTxIn, std::vector<CAmount>& vecAmounts);
@@ -1106,9 +1103,5 @@ public:
 private:
     std::vector<char> _ssExtra;
 };
-
-// Needed for DDNS
-void SendMoney(const CTxDestination &address, CAmount nValue, CWalletTx& wtxNew);
-void SendName(CScript scriptPubKey, CAmount nValue, CWalletTx& wtxNew, const CWalletTx& wtxNameIn, CAmount nFeeInput);
 
 #endif // DYNAMIC_WALLET_WALLET_H
