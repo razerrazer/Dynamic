@@ -221,6 +221,41 @@ public:
     }
 };
 
+/** Reads data from an underlying stream, while hashing the read data. */
+template<typename Source>
+class CHashVerifier : public CHashWriter
+{
+private:
+    Source* source;
+
+public:
+    CHashVerifier(Source* source_) : CHashWriter(source_->GetType(), source_->GetVersion()), source(source_) {}
+
+    void read(char* pch, size_t nSize)
+    {
+        source->read(pch, nSize);
+        this->write(pch, nSize);
+    }
+
+    void ignore(size_t nSize)
+    {
+        char data[1024];
+        while (nSize > 0) {
+            size_t now = std::min<size_t>(nSize, 1024);
+            read(data, now);
+            nSize -= now;
+        }
+    }
+
+    template<typename T>
+    CHashVerifier<Source>& operator>>(T& obj)
+    {
+        // Unserialize from this stream
+        ::Unserialize(*this, obj, nType, nVersion);
+        return (*this);
+    }
+};
+
 /** Compute the 256-bit hash of an object's serialization. */
 template<typename T>
 uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
@@ -234,6 +269,21 @@ unsigned int MurmurHash3(unsigned int nHashSeed, const std::vector<unsigned char
 
 void BIP32Hash(const ChainCode &chainCode, unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64]);
 
+/** SipHash-2-4, using a uint64_t-based (rather than byte-based) interface */
+class CSipHasher
+{
+private:
+    uint64_t v[4];
+    int count;
+
+public:
+    CSipHasher(uint64_t k0, uint64_t k1);
+    CSipHasher& Write(uint64_t data);
+    uint64_t Finalize() const;
+};
+
+uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val);
+uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint32_t extra);
 
     /* ----------- Dynamic Hash ------------------------------------------------ */
     /// Argon2d are parametrized by:
@@ -272,17 +322,10 @@ inline int Argon2d_Phase1_Hash(const void *in, const size_t size, const void *ou
     context.free_cbk = NULL;
     context.flags = DEFAULT_ARGON2_FLAG; // = ARGON2_DEFAULT_FLAGS
     // main configurable Argon2 hash parameters
-    // TODO: (Amir): Replace Argon2 parameters before release
-    /*
     context.m_cost = 500;  // Memory in KiB (512KB)
     context.lanes = 8;     // Degree of Parallelism
     context.threads = 1;   // Threads
     context.t_cost = 2;    // Iterations
-    */
-    context.m_cost = 250; // Memory in KiB (~256KB)
-    context.lanes = 4;    // Degree of Parallelism
-    context.threads = 1;  // Threads
-    context.t_cost = 1;   // Iterations
 
     return argon2_ctx(&context, Argon2_d);
 }
@@ -318,7 +361,7 @@ inline int Argon2d_Phase2_Hash(const void *in, const size_t size, const void *ou
     context.free_cbk = NULL;
     context.flags = DEFAULT_ARGON2_FLAG; // = ARGON2_DEFAULT_FLAGS
     // main configurable Argon2 hash parameters
-    context.m_cost = 8000; // Memory in KiB (~250KB)
+    context.m_cost = 8000; // Memory in KiB (~8192KB)
     context.lanes = 64;    // Degree of Parallelism
     context.threads = 1;   // Threads
     context.t_cost = 2;    // Iterations

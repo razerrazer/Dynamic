@@ -689,7 +689,26 @@ void SeperateString(std::string input, std::vector<std::string> &output, bool su
 		boost::split(output, input, boost::is_any_of(SubDelimiter));
 	else
 		boost::split(output, input, boost::is_any_of(PrimaryDelimiter));
-};
+}
+
+void SeperateFluidOpString(std::string input, std::vector<std::string> &output) {
+  std::vector<std::string> firstSplit;
+  SeperateString(input, firstSplit);
+  if (firstSplit.size() > 1) {
+    std::vector<std::string> secondSplit;
+    SeperateString(firstSplit[0], secondSplit, true);
+    for (const std::string& item : secondSplit) {
+      output.push_back(item);
+    }
+    unsigned int n = 0;
+    for (const std::string& item : firstSplit) {
+      if (n != 0) {
+        output.push_back(item);
+      }
+      n =+1;
+    }
+  }
+}
 
 std::string StitchString(std::string stringOne, std::string stringTwo, bool subDelimiter) {
 	if(subDelimiter)
@@ -705,19 +724,9 @@ std::string StitchString(std::string stringOne, std::string stringTwo, std::stri
 		return stringOne + PrimaryDelimiter + stringTwo + PrimaryDelimiter + stringThree;
 }
 
-int64_t StringToInteger(std::string input) {
-	int64_t result;
-	
-	ScrubString(input, true);
-	std::stringstream stream(input);
-	stream >> result;
-	
-	return result;
-}
-
-std::string GetRidOfScriptStatement(std::string input) {
+std::string GetRidOfScriptStatement(std::string input, int position) {
 	std::vector<std::string> output;
 	boost::split(output, input, boost::is_any_of(" "));
 	
-	return output.at(1);
+	return output.at(position);
 }

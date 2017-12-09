@@ -29,7 +29,7 @@
 
 #include <boost/assign/list_of.hpp>
 
-using namespace std; // God, why?
+using namespace std;
 
 // DYNAMIC
 extern bool DecodeIdentityTx(const CTransaction& tx, int& op, int& nOut, vector<vector<unsigned char> >& vvch, bool payment);
@@ -861,7 +861,7 @@ CAmount GetAccountBalance(CWalletDB& walletdb, const std::string& strAccount, in
     CAmount nBalance = 0;
 
     // Tally wallet transactions
-    for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it)
+    for (std::map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); ++it)
     {
         const CWalletTx& wtx = (*it).second;
         if (!CheckFinalTx(wtx) || wtx.GetBlocksToMaturity() > 0 || wtx.GetDepthInMainChain(fAddLockConf) < 0)
@@ -1080,9 +1080,9 @@ UniValue sendfrom(const UniValue& params, bool fHelp)
             "\nSend 0.01 " + CURRENCY_UNIT + " from the default account to the address, must have at least 1 confirmation\n"
             + HelpExampleCli("sendfrom", "\"\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" 0.01") +
             "\nSend 0.01 from the tabby account to the given address, funds must have at least 10 confirmations\n"
-            + HelpExampleCli("sendfrom", "\"tabby\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" 0.01 10 \"donation\" \"seans outpost\"") +
+            + HelpExampleCli("sendfrom", "\"tabby\" \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\" 0.01 10 false \"donation\" \"seans outpost\"") +
             "\nAs a json rpc call\n"
-            + HelpExampleRpc("sendfrom", "\"tabby\", \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\", 0.01, 10, \"donation\", \"seans outpost\"")
+            + HelpExampleRpc("sendfrom", "\"tabby\", \"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\", 0.01, 10, false \"donation\", \"seans outpost\"")
         );
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
@@ -1156,9 +1156,9 @@ UniValue sendmany(const UniValue& params, bool fHelp)
             "\nSend two amounts to two different addresses:\n"
             + HelpExampleCli("sendmany", "\"tabby\" \"{\\\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.01,\\\"D1MfcDTf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.02}\"") +
             "\nSend two amounts to two different addresses setting the confirmation and comment:\n"
-            + HelpExampleCli("sendmany", "\"tabby\" \"{\\\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.01,\\\"D1MfcDTf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.02}\" 10 \"testing\"") +
+            + HelpExampleCli("sendmany", "\"tabby\" \"{\\\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.01,\\\"D1MfcDTf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.02}\" 10 false \"testing\"") +
             "\nAs a json rpc call\n"
-            + HelpExampleRpc("sendmany", "\"tabby\", \"{\\\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.01,\\\"D1MfcDTf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.02}\", 10, \"testing\"")
+            + HelpExampleRpc("sendmany", "\"tabby\", \"{\\\"D5nRy9Tf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.01,\\\"D1MfcDTf7Zsef8gMGL2fhWA9ZslrP4K5tf\\\":0.02}\", 10, false \"testing\"")
         );
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
@@ -1466,8 +1466,8 @@ UniValue listreceivedbyaddress(const UniValue& params, bool fHelp)
 
             "\nExamples:\n"
             + HelpExampleCli("listreceivedbyaddress", "")
-            + HelpExampleCli("listreceivedbyaddress", "10 true")
-            + HelpExampleRpc("listreceivedbyaddress", "10, true, true")
+            + HelpExampleCli("listreceivedbyaddress", "10 false true")
+            + HelpExampleRpc("listreceivedbyaddress", "10, false, true, true")
         );
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
@@ -1504,8 +1504,8 @@ UniValue listreceivedbyaccount(const UniValue& params, bool fHelp)
 
             "\nExamples:\n"
             + HelpExampleCli("listreceivedbyaccount", "")
-            + HelpExampleCli("listreceivedbyaccount", "10 true")
-            + HelpExampleRpc("listreceivedbyaccount", "10, true, true")
+            + HelpExampleCli("listreceivedbyaccount", "10 false true")
+            + HelpExampleRpc("listreceivedbyaccount", "10, false, true, true")
         );
 
     LOCK2(cs_main, pwalletMain->cs_wallet);

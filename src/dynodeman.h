@@ -28,7 +28,7 @@ private:
 
     static const int LAST_PAID_SCAN_BLOCKS      = 100;
 
-    static const int MIN_POSE_PROTO_VERSION     = 70500;
+    static const int MIN_POSE_PROTO_VERSION     = 70600;
     static const int MAX_POSE_CONNECTIONS       = 10;
     static const int MAX_POSE_RANK              = 10;
     static const int MAX_POSE_BLOCKS            = 10;
@@ -223,7 +223,7 @@ public:
     void CheckDynode(const CPubKey& pubKeyDynode, bool fForce);
 
     bool IsDynodePingedWithin(const COutPoint& outpoint, int nSeconds, int64_t nTimeToCheckAt = -1);
-    void SetDynodeLastPing(const COutPoint& outpoint, const CDynodePing& mnp);
+    void SetDynodeLastPing(const COutPoint& outpoint, const CDynodePing& dnp);
 
     void UpdatedBlockTip(const CBlockIndex *pindex);
 

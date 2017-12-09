@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #define UVOIDBEGIN(a)       ((void*)&(a))
 #define BEGIN(a)            ((char*)&(a))
@@ -172,10 +173,10 @@ public:
 
 void ScrubString(std::string &input, bool forInteger = false);
 void SeperateString(std::string input, std::vector<std::string> &output, bool subDelimiter = false);
+void SeperateFluidOpString(std::string input, std::vector<std::string> &output);
 std::string StitchString(std::string stringOne, std::string stringTwo, bool subDelimiter = false);
 std::string StitchString(std::string stringOne, std::string stringTwo, std::string stringThree, bool subDelimiter = false);
-int64_t StringToInteger(std::string input);
-std::string GetRidOfScriptStatement(std::string input);
+std::string GetRidOfScriptStatement(std::string input, int position = 1);
 
 extern std::string PrimaryDelimiter;
 extern std::string SubDelimiter;
