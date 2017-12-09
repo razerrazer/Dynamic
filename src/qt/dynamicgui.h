@@ -149,6 +149,8 @@ private:
     QAction *openAction;
     QAction *showHelpMessageAction;
     QAction *showPrivateSendHelpAction;
+	QAction *identityListAction;
+    QAction *certListAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -246,7 +248,11 @@ private Q_SLOTS:
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
     void gotoVerifyMessageTab(QString addr = "");
-
+    
+    /** Switch to identity list page */
+    void gotoIdentityListPage();
+    /** Switch to certificate  page */
+    void gotoCertListPage();
     /** Show open dialog */
     void openClicked();
 #endif // ENABLE_WALLET

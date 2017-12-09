@@ -19,6 +19,10 @@
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 
+// DYNAMIC use identityes as addresses
+extern bool GetAddressFromIdentity(const std::string& strIdentity, std::string& strAddress, unsigned char& safetyLevel, bool& safeSearch, std::vector<unsigned char> &vchRedeemScript, std::vector<unsigned char> &vchPubKey);
+extern bool GetIdentityFromAddress(const std::string& strAddress, std::string& strIdentity, unsigned char& safetyLevel, bool& safeSearch, std::vector<unsigned char> &vchRedeemScript, std::vector<unsigned char> &vchPubKey);
+
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
@@ -231,19 +235,102 @@ public:
 
 } // anon namespace
 
-bool CDynamicAddress::Set(const CKeyID& id)
-{
-    SetData(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS), &id, 20);
+// DYNAMIC identityes as addresses
+CDynamicAddress::CDynamicAddress() {
+    isIdentity = false;
+    identityName = "";
+    safeSearch = false;
+    safetyLevel = 0;
+    vchRedeemScript.clear();
+    vchPubKey.clear();
+}
+// DYNAMIC support old sys
+CDynamicAddress::CDynamicAddress(const CTxDestination &dest, CChainParams::AddressType sysVer) { 
+    isIdentity = false;
+    safeSearch = false;
+    safetyLevel = 0;
+    identityName = "";
+    vchRedeemScript.clear();
+    vchPubKey.clear();
+    Set(dest, sysVer);
+}
+CDynamicAddress::CDynamicAddress(const std::string& strAddress) { 
+    isIdentity = false;
+    identityName = "";
+    SetString(strAddress);
+    // try to resolve identity address from identity name
+    if (!IsValid())
+    {
+    
+        std::string strIdentityAddress;
+        if(GetAddressFromIdentity(strAddress, strIdentityAddress, safetyLevel, safeSearch, vchRedeemScript, vchPubKey))
+        {
+            SetString(strIdentityAddress);
+            identityName = strAddress;
+            isIdentity = true;
+        }
+
+    }
+    // try to resolve identity name from identity address
+    else
+    {
+        
+        std::string strIdentityAddress = strAddress;
+        SetString(strIdentityAddress);
+        if(GetIdentityFromAddress(strIdentityAddress, identityName, safetyLevel, safeSearch, vchRedeemScript, vchPubKey))
+        {
+            SetString(strIdentityAddress);
+            isIdentity = true;
+        }   
+    }
+            
+}
+CDynamicAddress::CDynamicAddress(const char* pszAddress) { 
+    isIdentity = false;
+    SetString(pszAddress);
+    // try to resolve identity address
+    if (!IsValid())
+    {
+        
+        std::string strIdentityAddress;
+        if(GetAddressFromIdentity(std::string(pszAddress), strIdentityAddress, safetyLevel, safeSearch, vchRedeemScript, vchPubKey))
+        {
+            SetString(strIdentityAddress);
+            identityName = std::string(pszAddress);
+            isIdentity = true;
+        }           
+    }
+    else
+    {
+        
+        std::string strIdentityAddress = std::string(pszAddress);
+        SetString(strIdentityAddress);
+        if(GetIdentityFromAddress(strIdentityAddress, identityName, safetyLevel, safeSearch, vchRedeemScript, vchPubKey))
+        {
+            isIdentity = true;
+        }   
+    }
+}
+// DYNAMIC support old sys
+bool CDynamicAddress::Set(const CKeyID& id, CChainParams::AddressType sysVer)
+{   
+    if(sysVer == CChainParams::ADDRESS_DYN)
+        SetData(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS), &id, 20);
+    else if(sysVer == CChainParams::ADDRESS_SYS)
+        SetData(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS_SYS), &id, 20);
     return true;
 }
 
-bool CDynamicAddress::Set(const CScriptID& id)
+bool CDynamicAddress::Set(const CScriptID& id, CChainParams::AddressType sysVer)
 {
-    SetData(Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS), &id, 20);
+    if(sysVer == CChainParams::ADDRESS_DYN)
+        SetData(Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS), &id, 20);
+    else if(sysVer == CChainParams::ADDRESS_SYS)
+        SetData(Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS_SYS), &id, 20);
     return true;
 }
-
-bool CDynamicAddress::Set(const CTxDestination& dest)
+// DYNAMIC support old sys
+bool CDynamicAddress::Set(const CTxDestination& dest, CChainParams::AddressType sysVer)
 {
     return boost::apply_visitor(CDynamicAddressVisitor(this), dest);
 }
@@ -256,8 +343,12 @@ bool CDynamicAddress::IsValid() const
 bool CDynamicAddress::IsValid(const CChainParams& params) const
 {
     bool fCorrectSize = vchData.size() == 20;
-    bool fKnownVersion = vchVersion == params.Base58Prefix(CChainParams::PUBKEY_ADDRESS) ||
-                         vchVersion == params.Base58Prefix(CChainParams::SCRIPT_ADDRESS);
+    // DYNAMIC allow old DYNAMIC address scheme
+    bool fKnownVersion = vchVersion == params.Base58Prefix(CChainParams::PUBKEY_ADDRESS)     ||
+                         vchVersion == params.Base58Prefix(CChainParams::PUBKEY_ADDRESS_DYN) ||
+                         vchVersion == params.Base58Prefix(CChainParams::PUBKEY_ADDRESS_SYS) ||
+                         vchVersion == params.Base58Prefix(CChainParams::SCRIPT_ADDRESS)     ||
+                         vchVersion == params.Base58Prefix(CChainParams::SCRIPT_ADDRESS_SYS);
     return fCorrectSize && fKnownVersion;
 }
 
@@ -267,12 +358,32 @@ CTxDestination CDynamicAddress::Get() const
         return CNoDestination();
     uint160 id;
     memcpy(&id, &vchData[0], 20);
-    if (vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
+    // DYNAMIC allow old DYNAMIC address scheme
+    if (vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS) ||
+        vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS_DYN) ||
+        vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS_SYS))
         return CKeyID(id);
-    else if (vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS))
+    else if (vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS) ||
+            vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS_SYS))
         return CScriptID(id);
     else
         return CNoDestination();
+}
+
+bool CDynamicAddress::GetKeyID(CKeyID& keyID) const
+{
+    // DYNAMIC allow old DYNAMIC address scheme
+    if (!IsValid() || (vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS) && vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS_DYN) && vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS_SYS)))
+        return false;
+    uint160 id;
+    memcpy(&id, &vchData[0], 20);
+    keyID = CKeyID(id);
+    return true;
+}
+
+bool CDynamicAddress::IsScript() const
+{
+    return IsValid() && (vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS) || vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS_SYS));
 }
 
 bool CDynamicAddress::GetIndexKey(uint160& hashBytes, int& type) const
@@ -290,21 +401,6 @@ bool CDynamicAddress::GetIndexKey(uint160& hashBytes, int& type) const
     }
 
     return false;
-}
-
-bool CDynamicAddress::GetKeyID(CKeyID& keyID) const
-{
-    if (!IsValid() || vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
-        return false;
-    uint160 id;
-    memcpy(&id, &vchData[0], 20);
-    keyID = CKeyID(id);
-    return true;
-}
-
-bool CDynamicAddress::IsScript() const
-{
-    return IsValid() && vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS);
 }
 
 void CDynamicSecret::SetKey(const CKey& vchSecret)

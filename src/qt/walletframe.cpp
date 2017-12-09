@@ -132,6 +132,18 @@ void WalletFrame::gotoDynodePage()
         i.value()->gotoDynodePage();
 }
 
+void WalletFrame::gotoIdentityListPage() {
+    WalletView *walletView = currentWalletView();
+    if (walletView)
+        walletView->gotoIdentityListPage();
+}
+
+void WalletFrame::gotoCertListPage() {
+    WalletView *walletView = currentWalletView();
+    if (walletView)
+        walletView->gotoCertListPage();
+}
+
 void WalletFrame::gotoReceiveCoinsPage()
 {
     QMap<QString, WalletView*>::const_iterator i;

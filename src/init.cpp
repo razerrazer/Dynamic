@@ -61,6 +61,8 @@
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
 #endif
+#include "identity.h"
+#include "cert.h"
 
 #include <memory>
 #include <stdint.h>
@@ -260,6 +262,14 @@ void PrepareShutdown()
 
     {
         LOCK(cs_main);
+        // DYNAMIC
+        if(!fTxIndex)
+        {
+            int servicesCleaned = 0;
+            LogPrintf("%s: Cleaning up Dynamic Databases...\n", __func__);
+            CleanupDynamicServiceDatabases(servicesCleaned);
+            LogPrintf("%s: Cleanup finished! Removed %d expired services...\n", __func__, servicesCleaned);
+        }
         if (pcoinsTip != NULL) {
             FlushStateToDisk();
         }
@@ -1532,11 +1542,15 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 delete pcoinsdbview;
                 delete pcoinscatcher;
                 delete pblocktree;
+                delete pidentitydb;
+                delete pcertdb;
 
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
                 pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex || fReindexChainState);
                 pcoinscatcher = new CCoinsViewErrorCatcher(pcoinsdbview);
                 pcoinsTip = new CCoinsViewCache(pcoinscatcher);
+                pidentitydb = new CIdentityDB(nCoinCacheUsage*20, false, fReindex);
+                pcertdb = new CCertDB(nCoinCacheUsage*2, false, fReindex);
 
                 if (fReindex) {
                     pblocktree->WriteReindexing(true);

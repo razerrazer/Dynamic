@@ -29,6 +29,15 @@
 
 #include <boost/assign/list_of.hpp>
 
+using namespace std;
+
+// DYNAMIC
+extern bool DecodeIdentityTx(const CTransaction& tx, int& op, int& nOut, vector<vector<unsigned char> >& vvch, bool payment);
+extern bool DecodeCertTx(const CTransaction& tx, int& op, int& nOut, vector<vector<unsigned char> >& vvch);
+extern bool CheckIdentityInputs(const CTransaction &tx, int op, int nOut, const vector<vector<unsigned char> > &vvchArgs, const CCoinsViewCache &inputs, bool fJustCheck, int nHeight, string &errorMessage, bool dontaddtodb);
+extern bool CheckCertInputs(const CTransaction &tx, int op, int nOut, const vector<vector<unsigned char> > &vvchArgs, const CCoinsViewCache &inputs, bool fJustCheck, int nHeight, string &errorMessage, bool dontaddtodb);
+extern bool DecodeIdentityScript(const CScript& script, int& op,std::vector<std::vector<unsigned char> > &vvch);
+
 int64_t nWalletUnlockTime;
 static CCriticalSection cs_nWalletUnlockTime;
 
@@ -404,6 +413,61 @@ static void SendMoney(const CTxDestination &address, CAmount nValue, bool fSubtr
     }
     if (!pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(), fUseInstantSend ? NetMsgType::TXLOCKREQUEST : NetMsgType::TX))
         throw JSONRPCError(RPC_WALLET_ERROR, "Error: The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.");
+}
+
+// DYNAMIC: Send service transactions
+void SendMoneyDynamic(const vector<CRecipient> &vecSend, CAmount nValue, bool fSubtractFeeFromAmount, CWalletTx& wtxNew, const CWalletTx* wtxIdentityIn=NULL, int nTxOutIdentity = 0, bool dynamicMultiSigTx=false, const CCoinControl* coinControl=NULL, const CWalletTx* wtxLinkIdentityIn=NULL, int nTxOutLinkIdentity = 0)
+{
+    CAmount curBalance = pwalletMain->GetBalance();
+
+    // Check amount
+    if (nValue <= 0)
+        throw runtime_error("Invalid amount");
+
+    if (nValue > curBalance)
+        throw runtime_error(strprintf("Insufficient funds. Amount requested %f, wallet balance %f", ValueFromAmount(nValue).get_real(), ValueFromAmount(curBalance).get_real()));
+
+    // Create and send the transaction
+    CReserveKey reservekey(pwalletMain);
+    CAmount nFeeRequired;
+    std::string strError;
+    int nChangePosRet = -1;
+    
+    if (!pwalletMain->CreateTransaction(vecSend, wtxNew, reservekey, nFeeRequired, nChangePosRet, strError, coinControl, !dynamicMultiSigTx, ALL_COINS, false, wtxIdentityIn, nTxOutIdentity, true, wtxLinkIdentityIn, nTxOutLinkIdentity)) {
+        if (!fSubtractFeeFromAmount && nValue + nFeeRequired > pwalletMain->GetBalance())
+            strError = strprintf("Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!", FormatMoney(nFeeRequired));
+        throw runtime_error(strError);
+    }
+	// run a check on the inputs without putting them into the db, just to ensure it will go into the mempool without issues and cause wallet annoyance
+	vector<vector<unsigned char> > vvch;
+	int op, nOut;
+	bool fJustCheck = true;
+	string errorMessage="";
+	CCoinsViewCache inputs(pcoinsTip);
+	for(unsigned int j = 0;j<wtxNew.vout.size();j++)
+	{
+		if(DecodeIdentityScript(wtxNew.vout[j].scriptPubKey, op, vvch))
+		{
+			CheckIdentityInputs(wtxNew, op, j, vvch, inputs, fJustCheck, chainActive.Tip()->nHeight+1, errorMessage, true);
+			if(!errorMessage.empty())
+				throw runtime_error(errorMessage.c_str());
+			CheckIdentityInputs(wtxNew,  op, j, vvch, inputs, !fJustCheck, chainActive.Tip()->nHeight+1, errorMessage, true);
+			if(!errorMessage.empty())
+				throw runtime_error(errorMessage.c_str());
+		}
+	}
+	if(DecodeCertTx(wtxNew, op, nOut, vvch))
+	{
+		CheckCertInputs(wtxNew, op, nOut, vvch, inputs, fJustCheck, chainActive.Tip()->nHeight+1, errorMessage, true);
+		if(!errorMessage.empty())
+			throw runtime_error(errorMessage.c_str());
+		CheckCertInputs(wtxNew,  op, nOut, vvch, inputs, !fJustCheck, chainActive.Tip()->nHeight+1, errorMessage, true);
+		if(!errorMessage.empty())
+			throw runtime_error(errorMessage.c_str());
+	}
+	
+    if (!dynamicMultiSigTx && !pwalletMain->CommitTransaction(wtxNew, reservekey, g_connman.get(), NetMsgType::TX))
+        throw runtime_error("DYNAMIC_RPC_ERROR ERRCODE: 9000 - " + _("The Dynamic identity you are trying to use for this transaction is invalid or has been updated and not confirmed yet! Please wait a block and try again..."));
 }
 
 void SendCustomTransaction(const CScript generatedScript, CWalletTx& wtxNew, CAmount nValue)

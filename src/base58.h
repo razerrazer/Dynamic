@@ -105,21 +105,30 @@ public:
  */
 class CDynamicAddress : public CBase58Data {
 public:
-    bool Set(const CKeyID &id);
-    bool Set(const CScriptID &id);
-    bool Set(const CTxDestination &dest);
+    // DYNAMIC
+    bool isIdentity;
+    unsigned char safetyLevel;
+    bool safeSearch;
+    std::string identityName;
+    std::vector<unsigned char> vchRedeemScript;
+    std::vector<unsigned char> vchPubKey;
+
+    bool Set(const CKeyID &id, CChainParams::AddressType sysVer = CChainParams::ADDRESS_DYN);
+    bool Set(const CScriptID &id, CChainParams::AddressType sysVer = CChainParams::ADDRESS_DYN);
+    bool Set(const CTxDestination &dest, CChainParams::AddressType sysVer = CChainParams::ADDRESS_DYN);
     bool IsValid() const;
     bool IsValid(const CChainParams &params) const;
 
-    CDynamicAddress() {}
-    CDynamicAddress(const CTxDestination &dest) { Set(dest); }
-    CDynamicAddress(const std::string& strAddress) { SetString(strAddress); }
-    CDynamicAddress(const char* pszAddress) { SetString(pszAddress); }
+    // DYNAMIC identityes as addresses
+    CDynamicAddress();
+    CDynamicAddress(const CTxDestination &dest, CChainParams::AddressType sysVer = CChainParams::ADDRESS_DYN);
+    CDynamicAddress(const std::string& strAddress);
+    CDynamicAddress(const char* pszAddress);
 
     CTxDestination Get() const;
     bool GetKeyID(CKeyID &keyID) const;
-    bool GetIndexKey(uint160& hashBytes, int& type) const;
     bool IsScript() const;
+    bool GetIndexKey(uint160& hashBytes, int& type) const;
 };
 
 /**

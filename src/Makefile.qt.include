@@ -39,13 +39,25 @@ QT_FORMS_UI = \
   qt/forms/sendcoinsdialog.ui \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
-  qt/forms/transactiondescdialog.ui 
+  qt/forms/transactiondescdialog.ui \
+  qt/forms/editidentitydialog.ui \
+  qt/forms/identitylistpage.ui \
+  qt/forms/myidentitylistpage.ui \
+  qt/forms/mycertlistpage.ui \
+  qt/forms/editcertdialog.ui \
+  qt/forms/certlistpage.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
   qt/moc_addresstablemodel.cpp \
+  qt/moc_identitylistpage.cpp \
+  qt/moc_identitytablemodel.cpp \
+  qt/moc_identityview.cpp \
   qt/moc_askpassphrasedialog.cpp \
   qt/moc_bantablemodel.cpp \
+  qt/moc_certlistpage.cpp \
+  qt/moc_certtablemodel.cpp \
+  qt/moc_certview.cpp \
   qt/moc_clientmodel.cpp \
   qt/moc_coincontroldialog.cpp \
   qt/moc_coincontroltreewidget.cpp \
@@ -56,11 +68,15 @@ QT_MOC_CPP = \
   qt/moc_dynamicunits.cpp \
   qt/moc_dynodelist.cpp \
   qt/moc_editaddressdialog.cpp \
+  qt/moc_editidentitydialog.cpp \
+  qt/moc_editcertdialog.cpp \
   qt/moc_guiutil.cpp \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
   qt/moc_modaloverlay.cpp \
+  qt/moc_myidentitylistpage.cpp \
+  qt/moc_mycertlistpage.cpp \
   qt/moc_notificator.cpp \
   qt/moc_openuridialog.cpp \
   qt/moc_optionsdialog.cpp \
@@ -77,6 +93,7 @@ QT_MOC_CPP = \
   qt/moc_rpcconsole.cpp \
   qt/moc_sendcoinsdialog.cpp \
   qt/moc_sendcoinsentry.cpp \
+  qt/moc_signverifymessagedialog.cpp \
   qt/moc_signverifymessagedialog.cpp \
   qt/moc_splashscreen.cpp \
   qt/moc_trafficgraphwidget.cpp \
@@ -113,8 +130,14 @@ PROTOBUF_PROTO = qt/paymentrequest.proto
 DYNAMIC_QT_H = \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
+  qt/identitylistpage.h \
+  qt/identitytablemodel.h \
+  qt/identityview.h \
   qt/askpassphrasedialog.h \
   qt/bantablemodel.h \
+  qt/certlistpage.h \
+  qt/certtablemodel.h \
+  qt/certview.h \
   qt/clientmodel.h \
   qt/coincontroldialog.h \
   qt/coincontroltreewidget.h \
@@ -125,12 +148,16 @@ DYNAMIC_QT_H = \
   qt/dynamicunits.h \
   qt/dynodelist.h \
   qt/editaddressdialog.h \
+  qt/editidentitydialog.h \
+  qt/editcertdialog.h \
   qt/guiconstants.h \
   qt/guiutil.h \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
   qt/modaloverlay.h \
+  qt/myidentitylistpage.h \
+  qt/mycertlistpage.h \
   qt/networkstyle.h \
   qt/notificator.h \
   qt/openuridialog.h \
@@ -165,7 +192,8 @@ DYNAMIC_QT_H = \
   qt/walletmodel.h \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
-  qt/winshutdownmonitor.h
+  qt/winshutdownmonitor.h \
+  qt/qvaluecombobox.h
   
 RES_ICONS = \
   qt/res/icons/dynamic.icns \
@@ -268,11 +296,21 @@ if ENABLE_WALLET
 DYNAMIC_QT_CPP += \
   qt/addressbookpage.cpp \
   qt/addresstablemodel.cpp \
+  qt/identitylistpage.cpp \
+  qt/identitytablemodel.cpp \
+  qt/identityview.cpp \
   qt/askpassphrasedialog.cpp \
+  qt/certlistpage.cpp \
+  qt/certtablemodel.cpp \
+  qt/certview.cpp \
   qt/coincontroldialog.cpp \
   qt/coincontroltreewidget.cpp \
   qt/dynodelist.cpp \
   qt/editaddressdialog.cpp \
+  qt/editidentitydialog.cpp \
+  qt/editcertdialog.cpp \
+  qt/myidentitylistpage.cpp \
+  qt/mycertlistpage.cpp \
   qt/openuridialog.cpp \
   qt/overviewpage.cpp \
   qt/paymentrequestplus.cpp \
@@ -293,7 +331,8 @@ DYNAMIC_QT_CPP += \
   qt/walletframe.cpp \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
-  qt/walletview.cpp
+  qt/walletview.cpp \
+  qt/qvaluecombobox.cpp
 endif
 
 RES_IMAGES = \
