@@ -559,7 +559,7 @@ bool CheckIdentityInputs(const CTransaction &tx, int op, int nOut, const vector<
 	if (fDebug)
 		LogPrintf("*** IDENTITY %d %d op=%s %s nOut=%d %s\n", nHeight, chainActive.Tip()->nHeight, identityFromOp(op).c_str(), tx.GetHash().ToString().c_str(), nOut, fJustCheck ? "JUSTCHECK" : "BLOCK");
 	const COutPoint *prevOutput = NULL;
-	const Coin *prevCoins;
+	const CCoins *prevCoins;
 	int prevOp = 0;
 	vector<vector<unsigned char> > vvchPrevArgs;
 	// Make sure identity outputs are not spent by a regular transaction, or the identity would be lost
@@ -1601,7 +1601,7 @@ void TransferIdentityBalances(const vector<unsigned char> &vchIdentity, const CS
 	GetAddress(theIdentity, &addressFrom);
 
 	CCoinsViewCache view(pcoinsTip);
-	const Coin *coins;
+	const CCoins *coins;
 	CTxDestination payDest;
 	CDynamicAddress destaddy;
 	// get all identity inputs and transfer them to the new identity destination
@@ -2434,7 +2434,7 @@ UniValue identitybalance(const UniValue& params, bool fHelp)
 		return ValueFromAmount(nAmount);
 	
 	CCoinsViewCache view(pcoinsTip);
-	const Coin *coins;
+	const CCoins *coins;
 	CTxDestination payDest;
 	CDynamicAddress destaddy;
 	// get all identity inputs and transfer them to the new identity destination
@@ -2473,7 +2473,7 @@ int identityunspent(const vector<unsigned char> &vchIdentity, COutPoint& outpoin
 	CDynamicAddress prevaddy;
 	int numResults = 0;
 	CCoinsViewCache view(pcoinsTip);
-	const Coin *coins;
+	const CCoins *coins;
 	bool found = false;
     for (unsigned int i = 0;i<vtxPos.size();i++)
     {
