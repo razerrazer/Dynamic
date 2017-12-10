@@ -442,7 +442,7 @@ bool CheckCertInputs(const CTransaction &tx, int op, int nOut, const vector<vect
 			if(!prevOutput)
 				continue;
 			// ensure inputs are unspent when doing consensus check to add to block
-			prevCoins = inputs.AccessCoins(prevOutput->hash);
+			prevCoins = inputs.AccessCoin(prevOutput->hash);
 			if(prevCoins == NULL)
 				continue;
 			if(prevCoins->vout.size() <= prevOutput->n || !IsDynamicScript(prevCoins->vout[prevOutput->n].scriptPubKey, pop, vvch) || pop == OP_IDENTITY_PAYMENT)

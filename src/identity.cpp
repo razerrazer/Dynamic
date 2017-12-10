@@ -5,6 +5,7 @@
 
 #include "identity.h"
 #include "cert.h"
+#include "coins.h"
 #include "net.h"
 #include "init.h"
 #include "validation.h"
@@ -559,7 +560,7 @@ bool CheckIdentityInputs(const CTransaction &tx, int op, int nOut, const vector<
 	if (fDebug)
 		LogPrintf("*** IDENTITY %d %d op=%s %s nOut=%d %s\n", nHeight, chainActive.Tip()->nHeight, identityFromOp(op).c_str(), tx.GetHash().ToString().c_str(), nOut, fJustCheck ? "JUSTCHECK" : "BLOCK");
 	const COutPoint *prevOutput = NULL;
-	const CCoins *prevCoins;
+	const Coin *prevCoins;
 	int prevOp = 0;
 	vector<vector<unsigned char> > vvchPrevArgs;
 	// Make sure identity outputs are not spent by a regular transaction, or the identity would be lost
@@ -627,7 +628,7 @@ bool CheckIdentityInputs(const CTransaction &tx, int op, int nOut, const vector<
 			if(!prevOutput)
 				continue;
 			// ensure inputs are unspent when doing consensus check to add to block
-			prevCoins = inputs.AccessCoins(prevOutput->hash);
+			prevCoins = inputs.AccessCoin(prevOutput->hash);
 			if(prevCoins == NULL)
 				continue;
 			if(prevCoins->vout.size() <= prevOutput->n || !IsDynamicScript(prevCoins->vout[prevOutput->n].scriptPubKey, pop, vvch) || pop == OP_IDENTITY_PAYMENT)
@@ -1601,14 +1602,14 @@ void TransferIdentityBalances(const vector<unsigned char> &vchIdentity, const CS
 	GetAddress(theIdentity, &addressFrom);
 
 	CCoinsViewCache view(pcoinsTip);
-	const CCoins *coins;
+	const Coin *coins;
 	CTxDestination payDest;
 	CDynamicAddress destaddy;
 	// get all identity inputs and transfer them to the new identity destination
     for (unsigned int i = 0;i<vtxPaymentPos.size();i++)
     {
 		const CIdentityPayment& identityPayment = vtxPaymentPos[i];
-		coins = view.AccessCoins(identityPayment.txHash);
+		coins = view.AccessCoin(identityPayment.txHash);
 		if(coins == NULL)
 			continue;
      
@@ -2434,14 +2435,14 @@ UniValue identitybalance(const UniValue& params, bool fHelp)
 		return ValueFromAmount(nAmount);
 	
 	CCoinsViewCache view(pcoinsTip);
-	const CCoins *coins;
+	const Coin *coins;
 	CTxDestination payDest;
 	CDynamicAddress destaddy;
 	// get all identity inputs and transfer them to the new identity destination
     for (unsigned int i = 0;i<vtxPaymentPos.size();i++)
     {
 		const CIdentityPayment& identityPayment = vtxPaymentPos[i];
-		coins = view.AccessCoins(identityPayment.txHash);
+		coins = view.AccessCoin(identityPayment.txHash);
 		if(coins == NULL)
 			continue;
        
@@ -2473,12 +2474,12 @@ int identityunspent(const vector<unsigned char> &vchIdentity, COutPoint& outpoin
 	CDynamicAddress prevaddy;
 	int numResults = 0;
 	CCoinsViewCache view(pcoinsTip);
-	const CCoins *coins;
+	const Coin *coins;
 	bool found = false;
     for (unsigned int i = 0;i<vtxPos.size();i++)
     {
 		const CIdentityIndex& identity = vtxPos[i];
-		coins = view.AccessCoins(identity.txHash);
+		coins = view.AccessCoin(identity.txHash);
 
 		if(coins == NULL)
 			continue;
