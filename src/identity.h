@@ -18,7 +18,7 @@ class CTxOut;
 class COutPoint;
 class CReserveKey;
 class CCoinsViewCache;
-class CCoins;
+class Coin;
 class CBlock;
 class CDynamicAddress;
 class COutPoint;

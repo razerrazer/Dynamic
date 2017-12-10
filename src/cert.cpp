@@ -398,7 +398,7 @@ bool CheckCertInputs(const CTransaction &tx, int op, int nOut, const vector<vect
 			fJustCheck ? "JUSTCHECK" : "BLOCK");
 	bool foundIdentity = false;
     const COutPoint *prevOutput = NULL;
-    const CCoins *prevCoins;
+    const Coin *prevCoins;
 
 	int prevIdentityOp = 0;
     // Make sure cert outputs are not spent by a regular transaction, or the cert would be lost
