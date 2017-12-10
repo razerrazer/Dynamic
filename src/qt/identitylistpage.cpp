@@ -14,7 +14,6 @@
 #include "walletmodel.h"
 #include "dynamicgui.h"
 #include "editidentitydialog.h"
-#include "newmessagedialog.h"
 #include "signrawtxdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
@@ -139,7 +138,8 @@ void IdentityListPage::on_signMultisigButton_clicked()
 }
 void IdentityListPage::on_messageButton_clicked()
 {
-   
+	return; // Remove feature entirely
+  /* 
  	if(!model)	
 		return;
 	if(!ui->tableView->selectionModel())
@@ -153,7 +153,7 @@ void IdentityListPage::on_messageButton_clicked()
 	// send message to seller
 	NewMessageDialog dlg(NewMessageDialog::NewMessage, identity);   
 	dlg.exec();
-}
+*/}
 
 void IdentityListPage::on_copyIdentity_clicked()
 {

@@ -275,3 +275,4 @@ const Coin& AccessByTxid(const CCoinsViewCache& view, const uint256& txid)
     }
     return coinEmpty;
 }
+

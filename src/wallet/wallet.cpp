@@ -42,6 +42,8 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/thread.hpp>
 
+using namespace std;
+
 // Dynamic services
 extern int IndexOfIdentityOutput(const CTransaction& tx);
 extern bool IsDynamicScript(const CScript& scriptPubKey, int &op, vector<vector<unsigned char> > &vvchArgs);

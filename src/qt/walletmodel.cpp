@@ -49,7 +49,7 @@ using namespace std;
 extern bool DecodeAndParseIdentityTx(const CTransaction& tx, int& op, int& nOut, vector<vector<unsigned char> >& vvch);
 extern bool DecodeAndParseCertTx(const CTransaction& tx, int& op, int& nOut, vector<vector<unsigned char> >& vvch);
 
-extern std::string EncodeHexTx(const CTransaction& tx, const int serializeFlags = 0);
+extern std::string EncodeHexTx(const CTransaction& tx);
 extern bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx);
 
 WalletModel::WalletModel(const PlatformStyle *platformStyle, CWallet *_wallet, OptionsModel *_optionsModel, QObject *parent) :

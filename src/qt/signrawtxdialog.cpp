@@ -12,11 +12,11 @@
 #include "ui_interface.h"
 #include <QMessageBox>
 #include <QJsonDocument>
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include <QSettings>
 using namespace std;
 
-extern CRPCTable tableRPC;
+extern const CRPCTable tableRPC;
 SignRawTxDialog::SignRawTxDialog(QWidget* parent) :
 	QDialog(parent),
     ui(new Ui::SignRawTxDialog)

@@ -14,6 +14,7 @@
 #include "rpcserver.h"
 #include "wallet/wallet.h"
 #include "chainparams.h"
+#include "txdb.h"
 #include <boost/algorithm/hex.hpp>
 #include <boost/algorithm/string/case_conv.hpp> // for to_lower()
 #include <boost/xpressive/xpressive_dynamic.hpp>
@@ -442,7 +443,7 @@ bool CheckCertInputs(const CTransaction &tx, int op, int nOut, const vector<vect
 			if(!prevOutput)
 				continue;
 			// ensure inputs are unspent when doing consensus check to add to block
-			prevCoins = inputs.AccessCoin(prevOutput->hash);
+			prevCoins = inputs.AccessCoin(prevOutput);
 			if(prevCoins == NULL)
 				continue;
 			if(prevCoins->vout.size() <= prevOutput->n || !IsDynamicScript(prevCoins->vout[prevOutput->n].scriptPubKey, pop, vvch) || pop == OP_IDENTITY_PAYMENT)
