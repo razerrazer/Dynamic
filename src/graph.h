@@ -6,13 +6,13 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/hawick_circuits.hpp>
+#include <boost/graph/topological_sort.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/topological_sort.hpp>
 
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS > Graph;
 typedef boost::graph_traits<Graph> Traits;
@@ -78,4 +78,5 @@ bool OrderBasedOnArrivalTime(std::vector<CTransaction>& blockVtx);
 bool CreateGraphFromVTX(const std::vector<CTransaction>& blockVtx, Graph &graph, std::vector<vertex_descriptor> &vertices, IndexMap &mapTxIndex);
 void GraphRemoveCycles(const std::vector<CTransaction>& blockVtx, std::vector<int> &conflictedIndexes, Graph& graph, const std::vector<vertex_descriptor> &vertices, IndexMap &mapTxIndex);
 bool DAGTopologicalSort(std::vector<CTransaction>& blockVtx, const std::vector<int> &conflictedIndexes, const Graph& graph, const IndexMap &mapTxIndex);
+
 #endif // GRAPH_H
