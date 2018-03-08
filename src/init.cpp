@@ -68,6 +68,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
+// SYSCOIN services
+#include "alias.h"
+#include "asset.h"
+#include "assetallocation.h"
+#include "cert.h"
+#include "escrow.h"
+#include "offer.h"
+
 #ifndef WIN32
 #include <signal.h>
 #endif
@@ -261,6 +269,49 @@ void PrepareShutdown()
         LOCK(cs_main);
         if (pcoinsTip != NULL) {
             FlushStateToDisk();
+        }
+        // SYSCOIN
+        if (paliasdb != NULL)
+        {
+            if (!paliasdb->Flush())
+                LogPrintf("Failed to write to alias database!");
+            delete paliasdb;
+            paliasdb = NULL;
+        }
+        if (pofferdb != NULL)
+        {
+            if (!pofferdb->Flush())
+                LogPrintf("Failed to write to offer database!");
+            delete pofferdb;
+            pofferdb = NULL;
+        }
+        if (pcertdb != NULL)
+        {
+            if (!pcertdb->Flush())
+                LogPrintf("Failed to write to cert database!");
+            delete pcertdb;
+            pcertdb = NULL;
+        }
+        if (passetdb != NULL)
+        {
+            if (!passetdb->Flush())
+                LogPrintf("Failed to write to asset database!");
+            delete passetdb;
+            passetdb = NULL;
+        }
+        if (passetallocationdb != NULL)
+        {
+            if (!passetallocationdb->Flush())
+                LogPrintf("Failed to write to asset allocation database!");
+            delete passetallocationdb;
+            passetallocationdb = NULL;
+        }
+        if (pescrowdb != NULL)
+        {
+            if (!pescrowdb->Flush())
+                LogPrintf("Failed to write to escrow database!");
+            delete pescrowdb;
+            pescrowdb = NULL;
         }
         delete pcoinsTip;
         pcoinsTip = NULL;
@@ -1442,6 +1493,13 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 delete pcoinsdbview;
                 delete pcoinscatcher;
                 delete pblocktree;
+                // SYSCOIN service db's
+                delete paliasdb;
+                delete pofferdb;
+                delete pcertdb;
+                delete passetdb;
+                delete passetallocationdb;
+                delete pescrowdb;
 
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
                 pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex || fReindexChainState);
