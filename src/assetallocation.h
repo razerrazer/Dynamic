@@ -5,9 +5,9 @@
 #ifndef ASSETALLOCATION_H
 #define ASSETALLOCATION_H
 
-#include "graph.h"
 #include "dbwrapper.h"
 #include "feedback.h"
+#include "graph.h"
 #include "ranges.h"
 #include "rpcserver.h"
 #include "primitives/transaction.h"

@@ -5,12 +5,13 @@
 #ifndef ASSET_H
 #define ASSET_H
 
-#include "rpcserver.h"
+#include "assetallocation.h"
 #include "dbwrapper.h"
+#include "rpcserver.h"
 #include "script/script.h"
 #include "serialize.h"
 #include "primitives/transaction.h"
-#include "assetallocation.h"
+
 class CWalletTx;
 class CTransaction;
 class CReserveKey;

@@ -26,8 +26,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
-#include <mongoc.h>
 #include <chrono>
+#include <mongoc.h>
 
 using namespace std::chrono;
 using namespace std;

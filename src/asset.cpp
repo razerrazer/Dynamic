@@ -3,32 +3,38 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "asset.h"
-#include "assetallocation.h"
+
 #include "alias.h"
-#include "init.h"
-#include "validation.h"
-#include "util.h"
-#include "random.h"
+#include "assetallocation.h"
 #include "base58.h"
-#include "core_io.h"
-#include "rpcserver.h"
-#include "wallet/wallet.h"
 #include "chainparams.h"
 #include "coincontrol.h"
-#include <boost/algorithm/hex.hpp>
+#include "core_io.h"
+#include "init.h"
+#include "random.h"
+#include "rpcserver.h"
+#include "util.h"
+#include "validation.h"
+#include "wallet/wallet.h"
+
 #include <boost/algorithm/string/case_conv.hpp> // for to_lower()
+#include <boost/algorithm/hex.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/thread.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/adaptor/reversed.hpp>
-#include <mongoc.h>
+#include <boost/thread.hpp>
+
 #include <chrono>
+#include <mongoc.h>
+
 using namespace std::chrono;
 using namespace std;
+
 extern mongoc_collection_t *asset_collection;
 extern mongoc_collection_t *assethistory_collection;
 extern void SendMoneySyscoin(const vector<unsigned char> &vchAlias, const vector<unsigned char> &vchWitness, const CRecipient &aliasRecipient, CRecipient &aliasPaymentRecipient, vector<CRecipient> &vecSend, CWalletTx& wtxNew, CCoinControl* coinControl, bool fUseInstantSend=false, bool transferAlias=false);
+
 bool IsAssetOp(int op) {
     return op == OP_ASSET_ACTIVATE
 		|| op == OP_ASSET_MINT
