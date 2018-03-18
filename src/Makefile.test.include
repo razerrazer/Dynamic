@@ -77,6 +77,10 @@ DYNAMIC_TESTS =\
   test/reverselock_tests.cpp \
   test/rpc_tests.cpp \
   test/sanity_tests.cpp \
+  test/services_alias_tests.cpp \
+  test/services_offer_tests.cpp \
+  test/services_cert_tests.cpp \
+  test/services_escrow_tests.cpp \
   test/scheduler_tests.cpp \
   test/script_P2SH_tests.cpp \
   test/script_P2PKH_tests.cpp \
@@ -89,6 +93,8 @@ DYNAMIC_TESTS =\
   test/streams_tests.cpp \
   test/test_dynamic.cpp \
   test/test_dynamic.h \
+  test/test_services.cpp \
+  test/test_services.h \
   test/test_random.h \
   test/testutil.cpp \
   test/testutil.h \
@@ -110,7 +116,8 @@ endif
 test_test_dynamic_SOURCES = $(DYNAMIC_TESTS) $(JSON_TEST_FILES) $(RAW_TEST_FILES)
 test_test_dynamic_CPPFLAGS = $(AM_CPPFLAGS) $(DYNAMIC_INCLUDES) -I$(builddir)/test/ $(TESTDEFS) $(EVENT_CFLAGS)
 test_test_dynamic_LDADD = $(LIBDYNAMIC_SERVER) $(LIBDYNAMIC_CLI) $(LIBDYNAMIC_COMMON) $(LIBDYNAMIC_UTIL) $(LIBDYNAMIC_CRYPTO) $(LIBUNIVALUE) \
-  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(LIBSECP256K1) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS) $(LIBBSON) $(LIBMONGODB)
+  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(LIBSECP256K1) \ 
+  $(LIBBSON) $(LIBMONGODB)
 test_test_dynamic_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 if ENABLE_WALLET
 test_test_dynamic_LDADD += $(LIBDYNAMIC_WALLET)

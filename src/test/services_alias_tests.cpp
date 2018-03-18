@@ -1,7 +1,7 @@
-#include "test/test_syscoin_services.h"
+#include "test/test_services.h"
 #include "utiltime.h"
 #include "util.h"
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include "alias.h"
 #include "cert.h"
 #include "base58.h"
@@ -923,7 +923,7 @@ BOOST_AUTO_TEST_CASE (generate_aliasexpired)
 	vector<unsigned char> vchPubKey(pubKey.begin(), pubKey.end());
 	vector<unsigned char> vchPrivKey(privKey.begin(), privKey.end());	
 	BOOST_CHECK(pubKey.IsFullyValid());
-	CSyscoinAddress aliasAddress(pubKey.GetID());
+	CDynamicAddress aliasAddress(pubKey.GetID());
 	// should fail: alias update on expired alias
 	BOOST_CHECK_THROW(CallRPC("node2", "aliasupdate aliasexpirednode2 newdata1"), runtime_error);
 	// should fail: alias transfer from expired alias

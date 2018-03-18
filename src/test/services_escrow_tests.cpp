@@ -1,6 +1,6 @@
-#include "test/test_syscoin_services.h"
+#include "test/test_services.h"
 #include "utiltime.h"
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include <boost/test/unit_test.hpp>
 #include "feedback.h"
 #include "alias.h"

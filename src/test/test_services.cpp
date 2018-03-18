@@ -1,8 +1,12 @@
-#include "test_syscoin_services.h"
+// Copyright (c) 2016-2017 The Syscoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include "test_services.h"
 #include "utiltime.h"
 #include "util.h"
 #include "amount.h"
-#include "rpc/server.h"
+#include "rpcserver.h"
 #include "feedback.h"
 #include "cert.h"
 #include "escrow.h"
@@ -557,13 +561,13 @@ string AliasNew(const string& node, const string& aliasname, const string& pubda
 	privKey.MakeNewKey(true);
 	CPubKey pubKey = privKey.GetPubKey();
 	vchPubKey = vector<unsigned char>(pubKey.begin(), pubKey.end());
-	CSyscoinAddress aliasAddress(pubKey.GetID());
+	CDynamicAddress aliasAddress(pubKey.GetID());
 	vector<unsigned char> vchPrivKey(privKey.begin(), privKey.end());
 	BOOST_CHECK(privKey.IsValid());
 	BOOST_CHECK(privEncryptionKey.IsValid());
 	BOOST_CHECK(pubKey.IsFullyValid());
-	BOOST_CHECK_NO_THROW(CallRPC(node, "importprivkey " + CSyscoinSecret(privKey).ToString() + " \"\" false", true, false));
-	BOOST_CHECK_NO_THROW(CallRPC(node, "importprivkey " + CSyscoinSecret(privEncryptionKey).ToString() + " \"\" false", true, false));
+	BOOST_CHECK_NO_THROW(CallRPC(node, "importprivkey " + CDynamicSecret(privKey).ToString() + " \"\" false", true, false));
+	BOOST_CHECK_NO_THROW(CallRPC(node, "importprivkey " + CDynamicSecret(privEncryptionKey).ToString() + " \"\" false", true, false));
 
 	string strEncryptionPrivateKeyHex = HexStr(vchPrivEncryptionKey);
 	string expires = "\"\"";
@@ -643,11 +647,11 @@ string AliasTransfer(const string& node, const string& aliasname, const string& 
 	privKey.MakeNewKey(true);
 	CPubKey pubKey = privKey.GetPubKey();
 	vector<unsigned char> vchPubKey(pubKey.begin(), pubKey.end());
-	CSyscoinAddress aliasAddress(pubKey.GetID());
+	CDynamicAddress aliasAddress(pubKey.GetID());
 	vector<unsigned char> vchPrivKey(privKey.begin(), privKey.end());
 	BOOST_CHECK(privKey.IsValid());
 	BOOST_CHECK(pubKey.IsFullyValid());
-	BOOST_CHECK_NO_THROW(CallRPC(tonode, "importprivkey " + CSyscoinSecret(privKey).ToString() + " \"\" false", true, false));	
+	BOOST_CHECK_NO_THROW(CallRPC(tonode, "importprivkey " + CDynamicSecret(privKey).ToString() + " \"\" false", true, false));	
 
 	string acceptTransfers = "\"\"";
 	string expires = "\"\"";
@@ -1562,7 +1566,7 @@ const string EscrowNewAuction(const string& node, const string& sellernode, cons
 	CAmount nTotalOfferPrice = offerprice*qty;
 	CAmount nEscrowFee = GetEscrowArbiterFee(nTotalOfferPrice, boost::lexical_cast<float>(arbiterFee == "\"\""? "0.005": arbiterFee));
 	CAmount nWitnessFee = GetEscrowWitnessFee(nTotalOfferPrice, boost::lexical_cast<float>(witnessFee == "\"\"" ? "0" : witnessFee));
-	CAmount nNetworkFee = getFeePerByte(PAYMENTOPTION_SYS) * 400;
+	CAmount nNetworkFee = getFeePerByte(PAYMENTOPTION_DYN) * 400;
 	if (networkFee != "\"\"")
 		nNetworkFee = boost::lexical_cast<int>(networkFee) * 400 * COIN;
 	CAmount nShipping = AmountFromValue(shipping == "\"\"" ? "0" : shipping);
@@ -1690,7 +1694,7 @@ const string EscrowNewBuyItNow(const string& node, const string& sellernode, con
 	CAmount nTotalOfferPrice = offerprice*qty;
 	CAmount nEscrowFee = GetEscrowArbiterFee(nTotalOfferPrice, boost::lexical_cast<float>(arbiterFee == "\"\"" ? "0.005" : arbiterFee));
 	CAmount nWitnessFee = GetEscrowWitnessFee(nTotalOfferPrice, boost::lexical_cast<float>(witnessFee == "\"\"" ? "0.0" : witnessFee));
-	CAmount nNetworkFee = getFeePerByte(PAYMENTOPTION_SYS)*400;
+	CAmount nNetworkFee = getFeePerByte(PAYMENTOPTION_DYN)*400;
 	if (networkFee != "\"\"")
 		nNetworkFee = boost::lexical_cast<int>(networkFee)*400*COIN;
 	CAmount nShipping = AmountFromValue(shipping == "\"\""? "0": shipping);

@@ -1,5 +1,8 @@
-#ifndef SYSCOIN_TEST_TEST_SYSCOIN_SERVICES_H
-#define SYSCOIN_TEST_TEST_SYSCOIN_SERVICES_H
+// Copyright (c) 2016-2017 The Syscoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+#ifndef TEST_SERVICES_H
+#define TEST_SERVICES_H
 
 #include <stdio.h>
 #include <univalue.h>
