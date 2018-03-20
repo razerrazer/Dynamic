@@ -276,6 +276,7 @@ libdynamic_server_a_SOURCES = \
   psnotificationinterface.cpp \
   ranges.cpp \
   rest.cpp \
+  rpcalias.cpp \
   rpcblockchain.cpp \
   rpcdynode.cpp \
   rpcgovernance.cpp \
